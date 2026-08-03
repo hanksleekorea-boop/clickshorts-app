@@ -138,6 +138,9 @@ canvas{width:100%;height:100%;display:block}
 .pctrl{display:flex;gap:9px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .pbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer}
 .pbtn.main{background:var(--grad);border:0}
+.previs-card{margin-top:14px;padding:15px;border:1px solid rgba(122,92,255,.55);border-radius:16px;background:linear-gradient(135deg,rgba(122,92,255,.12),rgba(255,61,113,.07))}
+.previs-card h3{font-size:15px;margin-bottom:5px}.previs-card p{font-size:12px;line-height:1.55;color:var(--sub)}
+.previs-card .pbtn{width:100%;margin-top:11px}.previs-card .packstate{font-size:11px;color:var(--sub);margin-top:8px;min-height:16px}
 .recbadge{position:absolute;top:10px;left:10px;background:rgba(255,61,113,.9);color:#fff;font-size:11px;font-weight:800;border-radius:8px;padding:3px 8px;display:none;z-index:5}
 /* my videos */
 .vitem{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
@@ -174,7 +177,7 @@ nav button.on{color:var(--pri)}
 <body>
 <div id="app">
 <header>
-  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v0.5</span></div>
+  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.2</span></div>
   <button id="installBtn">📲 앱 설치</button>
 </header>
 <main>
@@ -254,6 +257,12 @@ nav button.on{color:var(--pri)}
     <button class="pbtn main" id="exportBtn">⬇ 영상 파일로 저장</button>
     <button class="pbtn" id="tuneBtn">🎚 장면 편집</button>
     <button class="pbtn" id="backBtn">✏ 대본 수정</button>
+  </div>
+  <div class="previs-card">
+    <h3>🎞 프리비스팩 — 고품질 영상 제작 준비</h3>
+    <p>저해상도 장면 기준 이미지, 장면별 생성 프롬프트, 자막, 편집표, 보이스·BGM·효과음 지시를 ZIP 하나로 묶습니다. 힉스필드·시댄스 등 유료 생성 전에 장면과 타이밍을 먼저 확정하세요.</p>
+    <button class="pbtn main" id="previsBtn">📦 프리비스팩 ZIP 만들기</button>
+    <div class="packstate" id="previsState">외부 서비스로 자동 전송하지 않습니다 · 독립 음성 파일은 포함되지 않습니다</div>
   </div>
   <div id="tunePanel" style="display:none">
     <h2 style="margin-top:20px">장면 미세조정 <small>시간·순서·강조 단어</small></h2>
@@ -1072,6 +1081,85 @@ function stopBGM(){clearInterval(bgmTimer);bgmTimer=null;bgmNodes.forEach(n=>{tr
 $('#replayBtn').onclick=()=>play();
 $('#muteBtn').onclick=function(){S.muted=!S.muted;this.textContent=S.muted?'🔇 무음':'🔊 소리';if(S.muted){stopTTS();stopBGM()}else if(S.playing){startBGM();speakScene(S.sceneIdx)}};
 $('#backBtn').onclick=()=>{stopAll();$('#tunePanel').style.display='none';switchView('v-make')};
+
+/* PREVIS_CORE_START — DOM 비의존 ZIP/SRT 코어: 테스트에서 이 구간을 직접 검증한다. */
+const PREVIS_ENCODER=new TextEncoder();
+function pvBytes(v){return v instanceof Uint8Array?v:PREVIS_ENCODER.encode(String(v))}
+function pvU16(n){return new Uint8Array([n&255,n>>>8&255])}
+function pvU32(n){return new Uint8Array([n&255,n>>>8&255,n>>>16&255,n>>>24&255])}
+function pvJoin(parts){const size=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(size);let at=0;for(const p of parts){out.set(p,at);at+=p.length}return out}
+const PREVIS_CRC_TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function previsCrc32(data){let c=0xFFFFFFFF;for(const b of data)c=PREVIS_CRC_TABLE[(c^b)&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function previsZipStored(files){
+  const locals=[],centrals=[];let offset=0;
+  for(const file of files){
+    const name=pvBytes(file.name),data=pvBytes(file.data),crc=previsCrc32(data),flags=0x0800;
+    const local=pvJoin([pvU32(0x04034b50),pvU16(20),pvU16(flags),pvU16(0),pvU16(0),pvU16(0),pvU32(crc),pvU32(data.length),pvU32(data.length),pvU16(name.length),pvU16(0),name,data]);
+    const central=pvJoin([pvU32(0x02014b50),pvU16(20),pvU16(20),pvU16(flags),pvU16(0),pvU16(0),pvU16(0),pvU32(crc),pvU32(data.length),pvU32(data.length),pvU16(name.length),pvU16(0),pvU16(0),pvU16(0),pvU16(0),pvU32(0),pvU32(offset),name]);
+    locals.push(local);centrals.push(central);offset+=local.length;
+  }
+  const cd=pvJoin(centrals),eocd=pvJoin([pvU32(0x06054b50),pvU16(0),pvU16(0),pvU16(files.length),pvU16(files.length),pvU32(cd.length),pvU32(offset),pvU16(0)]);
+  return pvJoin([...locals,cd,eocd]);
+}
+function previsSrtTime(sec){const ms=Math.max(0,Math.round(sec*1000)),h=Math.floor(ms/3600000),m=Math.floor(ms/60000)%60,s=Math.floor(ms/1000)%60,x=ms%1000;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')},${String(x).padStart(3,'0')}`}
+function previsBuildSrt(scenes){let at=0,n=0,out='';for(const sc of scenes){const start=at;at+=sc.dur;if(sc.hook)continue;n++;out+=`${n}\n${previsSrtTime(start)} --> ${previsSrtTime(at)}\n${sc.text}\n\n`}return out}
+if(typeof globalThis!=='undefined')globalThis.__previsCore={previsCrc32,previsZipStored,previsSrtTime,previsBuildSrt};
+/* PREVIS_CORE_END */
+
+function previsSafeName(s){return String(s||'shorts').normalize('NFKC').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,'_').slice(0,48)}
+function previsCsv(v){const s=String(v??'');return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}
+function previsTimeline(){let at=0;return S.scenes.map((sc,i)=>{const row={scene:i+1,start:Number(at.toFixed(3)),end:Number((at+sc.dur).toFixed(3)),duration:Number(sc.dur.toFixed(3)),text:sc.text,accent:sc.accent||'',hook:!!sc.hook};at+=sc.dur;return row})}
+function previsPrompt(row){
+  const kind=row.hook?'첫 1초 훅 프레임, 즉시 시선을 잡는 강한 타이포그래피':'세로형 쇼츠의 단일 장면';
+  return `${kind}. 주제/내레이션: "${row.text}". 9:16 세로 구도, ${S.tpl.name} 분위기, 기본색 ${S.tpl.g.join(' 및 ')}, 강조색 ${S.tpl.ac}. 주 피사체와 배경을 단순하고 명확하게 유지. 장면 길이 ${row.duration}초. 자연스러운 미세 움직임과 안정적인 카메라, 읽을 수 있는 자막용 중앙 안전영역 확보. 로고·워터마크·왜곡된 글자·과도한 장면 전환 제외.`;
+}
+function previsToneLabel(){return ({calm:'차분하고 신뢰감 있게',bright:'밝고 친근하게',deep:'낮고 무게감 있게',urgent:'빠르고 긴박하게'})[S.tone]||'자연스럽게'}
+function previsPngBlob(){return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(new Error('PNG 변환 실패')),'image/png'))}
+async function buildPrevisPack(){
+  if(!S.tpl||!S.scenes.length)throw new Error('먼저 쇼츠를 생성해 주세요');
+  stopAll(false);
+  const rows=previsTimeline(),files=[],frames=[];
+  let global=0;
+  for(let i=0;i<S.scenes.length;i++){
+    const sc=S.scenes[i],mid=Math.max(0.01,Math.min(sc.dur-0.01,sc.dur/2));
+    drawScene(i,mid,global+mid);
+    const bytes=new Uint8Array(await (await previsPngBlob()).arrayBuffer());
+    const name=`storyboard/scene-${String(i+1).padStart(3,'0')}.png`;
+    files.push({name,data:bytes});frames.push({name,bytes});global+=sc.dur;
+    $('#previsState').textContent=`기준 장면 생성 중 ${i+1}/${S.scenes.length}`;
+    await new Promise(r=>setTimeout(r,0));
+  }
+  drawScene(Math.min(S.sceneIdx,S.scenes.length-1),0.15,0.15);
+  const generated=new Date(),verified='2026-08-03';
+  const manifest={schema:'clickshorts-previs-pack/v1',generator:'ClickShorts alpha v1.2',generatedAt:generated.toISOString(),aspectRatio:'9:16',frameSize:{width:405,height:720},duration:Number(totalDur().toFixed(3)),template:{id:S.tpl.id,name:S.tpl.name,palette:[...S.tpl.g,S.tpl.ac]},voice:{language:'ko-KR',tone:S.tone,rate:S.rate,standaloneAudioIncluded:false},scenes:rows,files:{storyboard:S.scenes.length,captions:'subtitles/captions.srt',editPlan:'edit/edit-plan.json'},limitations:['스토리보드 PNG는 구도·색·자막 위치 확인용 저해상도 프리비스입니다.','브라우저 음성합성은 독립 음성 파일로 안정적으로 추출할 수 없어 대본과 디렉션만 제공합니다.','외부 영상 생성 서비스에 자동 업로드하거나 결과 품질을 보장하지 않습니다.']};
+  const readme=`클릭쇼츠 프리비스팩\n====================\n\n목적: 비용이 드는 고품질 영상 생성 전에 장면, 구도, 대본, 타이밍, 음향 지시를 먼저 확정합니다.\n\n권장 순서\n1. storyboard/ 프레임과 edit/edit-plan.csv로 장면 순서를 검토합니다.\n2. prompts/의 장면별 프롬프트를 복사하고 해당 PNG를 참조 이미지로 넣습니다.\n3. 가장 중요한 1~2장면만 먼저 저비용/초안 설정으로 생성해 피사체·카메라·텍스트 안전영역을 확인합니다.\n4. 통과한 설정으로 나머지 장면을 생성합니다.\n5. subtitles/captions.srt와 audio/ 지시표를 편집기에 적용합니다.\n\n중요한 한계\n- PNG는 405×720 저해상도 프리비스이며 최종 미술 에셋이 아닙니다.\n- 독립 음성/BGM 파일은 포함되지 않습니다. 정확한 대본·톤·속도·사운드 큐를 제공합니다.\n- 힉스필드·시댄스의 입력 방식과 제한은 바뀔 수 있습니다. 서비스별 파일의 확인일과 실제 화면을 함께 확인하세요.\n- 이 ZIP은 어떤 외부 서비스에도 자동 전송되지 않습니다.\n`;
+  files.push({name:'README_FIRST_KO.txt',data:readme});
+  files.push({name:'manifest.json',data:JSON.stringify(manifest,null,2)});
+  files.push({name:'subtitles/captions.srt',data:previsBuildSrt(S.scenes)});
+  files.push({name:'edit/edit-plan.json',data:JSON.stringify(rows,null,2)});
+  files.push({name:'edit/edit-plan.csv',data:'scene,start_sec,end_sec,duration_sec,type,text,accent\r\n'+rows.map(r=>[r.scene,r.start,r.end,r.duration,r.hook?'hook':'scene',r.text,r.accent].map(previsCsv).join(',')).join('\r\n')});
+  files.push({name:'prompts/universal-video-prompts.txt',data:rows.map(r=>`[장면 ${String(r.scene).padStart(3,'0')} | ${r.start}s–${r.end}s]\n참조 이미지: storyboard/scene-${String(r.scene).padStart(3,'0')}.png\n${previsPrompt(r)}`).join('\n\n')});
+  files.push({name:'prompts/higgsfield-guide.txt',data:`힉스필드 적용 가이드 (공식 공개 페이지 확인일 ${verified})\n\n- 장면별 PNG를 이미지/스토리보드 참조로 넣고 같은 번호의 universal 프롬프트를 사용하세요.\n- 카메라 프리셋을 쓸 때는 먼저 안정적인 미세 움직임으로 1개 장면을 시험하고, 통과 뒤 강한 움직임을 적용하세요.\n- 화면이나 지원 입력은 변경될 수 있으므로 자동 가져오기 파일이 아닌 제작 가이드입니다.\n\n${rows.map(r=>`장면 ${r.scene}: ${previsPrompt(r)}`).join('\n\n')}`});
+  files.push({name:'prompts/seedance-guide.txt',data:`시댄스 적용 가이드 (ByteDance Seed 공식 공개 자료 확인일 ${verified})\n\n- 텍스트와 storyboard PNG를 함께 참조하고, 지원 버전에서는 오디오/영상 참조를 추가할 수 있습니다.\n- 먼저 1개 장면으로 주체 일관성·카메라·동작을 확인한 뒤 다중 장면을 생성하세요.\n- 이 파일은 서비스 중립 프롬프트를 옮기기 위한 가이드이며 자동 가져오기 형식을 보장하지 않습니다.\n\n${rows.map(r=>`장면 ${r.scene}: ${previsPrompt(r)}`).join('\n\n')}`});
+  files.push({name:'audio/voice-direction.txt',data:`언어: 한국어(ko-KR)\n톤: ${previsToneLabel()}\n상대 속도: ${S.rate}\n\n독립 음성 파일: 포함하지 않음\n이유: 브라우저 SpeechSynthesis 출력은 환경마다 달라 독립 파일로 안정적으로 캡처할 수 없음. 아래 대본과 타임코드로 사용하는 영상 도구 또는 편집기에서 음성을 생성하세요.\n\n${rows.filter(r=>!r.hook).map(r=>`${previsSrtTime(r.start)}–${previsSrtTime(r.end)}  ${r.text}`).join('\n')}`});
+  const arr=ARR[S.tpl.id]||ARR.know;
+  files.push({name:'audio/sound-cue-sheet.csv',data:'time_sec,scene,cue,notes\r\n'+rows.map(r=>[r.start,r.scene,r.hook?'impact/whoosh':'voice + subtle bed',r.hook?'첫 훅 시작에 짧고 강한 임팩트':'대사 명료도 우선, 전환부에만 약한 효과음'].map(previsCsv).join(',')).join('\r\n')});
+  files.push({name:'audio/bgm-direction.txt',data:`템포: ${S.tpl.tempo} BPM\n드럼: ${arr.drums}\n패드: ${arr.pad?'사용':'미사용'}\n아르페지오: ${arr.arp}\n분위기: ${S.tpl.name}\n\n내레이션보다 낮은 음량을 유지하고, 훅과 장면 전환에서만 에너지를 올리세요. 저작권과 상업 사용 조건은 최종 음원별로 직접 확인해야 합니다.`});
+  files.push({name:'references/style-guide.json',data:JSON.stringify({aspectRatio:'9:16',safeZone:'중앙 80%, 상하 UI 영역 회피',template:S.tpl.name,colors:{background:S.tpl.g,accent:S.tpl.ac},typography:{weight:S.tpl.font,caption:'high contrast, centered'},storyboardPurpose:'composition, timing, text-safe-zone reference only'},null,2)});
+  return {zip:previsZipStored(files),count:files.length,sceneCount:frames.length};
+}
+$('#previsBtn').onclick=async()=>{
+  const btn=$('#previsBtn');if(btn.disabled)return;
+  btn.disabled=true;btn.textContent='⏳ 프리비스팩 만드는 중…';
+  try{
+    const out=await buildPrevisPack(),blob=new Blob([out.zip],{type:'application/zip'}),url=URL.createObjectURL(blob),d=new Date();
+    const stamp=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+    const a=document.createElement('a');a.href=url;a.download=`clickshorts-previs-${previsSafeName(S.tpl.name)}-${stamp}.zip`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+    $('#previsState').textContent=`완료 · 장면 ${out.sceneCount}개 · 파일 ${out.count}개 · 외부 전송 없음`;
+    toast('📦 프리비스팩 ZIP을 저장했어요!',3400);
+  }catch(e){$('#previsState').textContent='생성 실패 · 입력 내용은 그대로 유지됩니다';toast('프리비스팩 생성 실패: '+e.message,3800)}
+  finally{btn.disabled=false;btn.textContent='📦 프리비스팩 ZIP 만들기'}
+};
 
 /* ============ 0-1 장면 미세조정 ============ */
 $('#tuneBtn').onclick=()=>{
