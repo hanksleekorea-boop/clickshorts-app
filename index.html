@@ -170,6 +170,8 @@ canvas{width:100%;height:100%;display:block}
 .plan .cur{position:absolute;top:14px;right:14px}
 .pbtn2{width:100%;margin-top:12px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:12px;font-weight:700;cursor:pointer;font-size:13.5px}
 .plan.hot .pbtn2{background:var(--grad);border:0;color:#fff}
+/* privacy & analytics consent */
+.privacy-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:20px}.privacy-card h3{font-size:15px;margin-bottom:6px}.privacy-card p,.privacy-card li{font-size:11.5px;line-height:1.6;color:var(--sub)}.privacy-card ul{padding-left:18px;margin:8px 0}.privacy-state{border-radius:11px;padding:10px 11px;margin:10px 0;background:rgba(61,220,151,.08);border:1px solid rgba(61,220,151,.28);font-size:11.5px;line-height:1.55}.privacy-state.off{background:rgba(255,194,75,.07);border-color:rgba(255,194,75,.28)}.privacy-choice{display:flex;align-items:flex-start;gap:8px;padding:10px 0;font-size:12px;font-weight:700}.privacy-choice input{width:18px;height:18px;accent-color:var(--pri);flex-shrink:0}.privacy-card select{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:10px;font:12px inherit}.privacy-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.privacy-actions button{border:1px solid var(--line);border-radius:11px;background:var(--card2);color:var(--txt);padding:10px;font-weight:700;cursor:pointer}.privacy-actions .save{background:var(--grad);border:0}.privacy-actions button:disabled{opacity:.4}
 /* nav */
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(20,22,38,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:0;color:var(--sub);padding:10px 0 12px;font-size:10.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600}
@@ -190,7 +192,7 @@ nav button.on{color:var(--pri)}
 <body>
 <div id="app">
 <header>
-  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.4</span></div>
+  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.5</span></div>
   <button id="installBtn">📲 앱 설치</button>
 </header>
 <main>
@@ -335,6 +337,16 @@ nav button.on{color:var(--pri)}
     <div class="pn">Pro</div><div class="pp">₩29,000<small> /월</small></div>
     <ul><li>AI 시네마틱 엔진(생성형 영상 장면)</li><li>보이스 클로닝 1종</li><li>채널 시리즈 자동화(주제→대본→발행)</li><li>팀 시트 2인 · 우선 렌더링</li></ul>
     <button class="pbtn2">Pro 시작하기</button>
+  </div>
+  <div class="privacy-card" id="privacySettings">
+    <h3>🔒 개인정보·분석 설정</h3>
+    <p>분석 수집은 기본으로 꺼져 있습니다. 동의해도 현재 공개 앱은 외부로 데이터를 보내지 않으며, 운영 수집기가 연결되기 전까지 선택만 이 기기에 저장합니다.</p>
+    <div class="privacy-state off" id="analyticsState">분석 수집 OFF · 외부 전송 없음</div>
+    <label class="privacy-choice"><input type="checkbox" id="analyticsOptIn"><span>익명 사용 분석에 동의합니다<br><small>대본·주제·음성·파일 내용은 수집 대상이 아닙니다.</small></span></label>
+    <ul><li>대상: 앱 열기, 프리뷰 완료, 프리비스팩 다운로드 같은 기능 사건</li><li>제외: 입력한 콘텐츠, 계정 이름, 원본 파일, 광고 식별자</li><li>철회: 언제든 아래 버튼으로 즉시 OFF</li></ul>
+    <select id="analyticsRetention" disabled><option value="30">보존 기간 30일</option><option value="90">보존 기간 90일</option></select>
+    <div class="privacy-actions"><button class="save" id="analyticsSave">선택 저장</button><button id="analyticsWithdraw" disabled>동의 철회</button></div>
+    <p id="analyticsStorage" style="margin-top:8px">선택 저장 상태 확인 중</p>
   </div>
 </section>
 </main>
@@ -1446,6 +1458,42 @@ $('#seriesStart').value=(()=>{const d=new Date(Date.now()+3600000);d.setMinutes(
 $('#seriesCreate').onclick=()=>{try{const topics=$('#seriesTopics').value.split('\n');const series=seriesClientCreate({name:$('#seriesName').value,topics,tplId:$('#seriesTpl').value,startAt:new Date($('#seriesStart').value).toISOString(),intervalHours:Number($('#seriesInterval').value)});SERIES_MEMORY.unshift(series);seriesSaveLocal();renderSeriesList();$('#seriesTopics').value='';toast(`${series.items.length}편의 대본 초안을 만들었어요. 하나씩 확인해 주세요.`,3400)}catch(e){const m={series_topics_count_invalid:'주제를 1~20개 입력해 주세요',series_topic_length_invalid:'각 주제는 2~80자로 적어 주세요',series_topic_duplicate:'같은 주제가 중복됐어요',series_start_invalid:'시작 시각은 지금 이후로 정해 주세요'};toast(m[e.message]||'시리즈를 만들지 못했어요: '+e.message,3500)}};
 seriesLoadLocal();renderSeriesList();
 loadLib();renderQuota();
+
+/* ANALYTICS_CONSENT_CORE_START — 기본 OFF·명시 동의·허용 사건만 통과 */
+const ANALYTICS_ALLOWED_EVENTS=['app_open','preview_created','previs_pack_downloaded'];
+function analyticsConsentDefault(now=Date.now()){return {schemaVersion:1,enabled:false,explicit:false,retentionDays:30,updatedAt:new Date(now).toISOString(),categories:[]}}
+function analyticsConsentDecide(input={},now=Date.now()){
+  const enabled=input.enabled===true;if(enabled&&input.explicit!==true)throw new Error('analytics_explicit_consent_required');
+  const retentionDays=[30,90].includes(Number(input.retentionDays))?Number(input.retentionDays):30;
+  return {schemaVersion:1,enabled,explicit:enabled,retentionDays,updatedAt:new Date(now).toISOString(),categories:enabled?['product_usage']:[]};
+}
+function analyticsConsentLoad(raw,now=Date.now()){
+  if(!raw||raw.schemaVersion!==1||raw.enabled!==true||raw.explicit!==true)return analyticsConsentDefault(now);
+  return analyticsConsentDecide({enabled:true,explicit:true,retentionDays:raw.retentionDays},Date.parse(raw.updatedAt)||now);
+}
+function analyticsConsentAllows(consent,eventName){return consent?.enabled===true&&consent?.explicit===true&&ANALYTICS_ALLOWED_EVENTS.includes(String(eventName||''))}
+if(typeof globalThis!=='undefined')globalThis.__analyticsConsentCore={ANALYTICS_ALLOWED_EVENTS,analyticsConsentDefault,analyticsConsentDecide,analyticsConsentLoad,analyticsConsentAllows};
+/* ANALYTICS_CONSENT_CORE_END */
+
+let ANALYTICS_CONSENT=analyticsConsentDefault(),analyticsConsentStorage='persistent';
+function analyticsConsentRead(){
+  try{const raw=localStorage.getItem('cs_analytics_consent_v1');ANALYTICS_CONSENT=raw?analyticsConsentLoad(JSON.parse(raw)):analyticsConsentDefault();analyticsConsentStorage='persistent'}catch(e){ANALYTICS_CONSENT=analyticsConsentLoad(ANALYTICS_CONSENT);analyticsConsentStorage='memory'}
+  renderAnalyticsConsent();return ANALYTICS_CONSENT;
+}
+function analyticsConsentWrite(next){
+  ANALYTICS_CONSENT=analyticsConsentLoad(next);
+  try{const raw=JSON.stringify(ANALYTICS_CONSENT);localStorage.setItem('cs_analytics_consent_v1',raw);if(localStorage.getItem('cs_analytics_consent_v1')!==raw)throw new Error('readback');analyticsConsentStorage='persistent'}catch(e){analyticsConsentStorage='memory'}
+  renderAnalyticsConsent();return analyticsConsentStorage==='persistent';
+}
+function renderAnalyticsConsent(){
+  const on=ANALYTICS_CONSENT.enabled===true;$('#analyticsOptIn').checked=on;$('#analyticsRetention').disabled=!on;$('#analyticsRetention').value=String(ANALYTICS_CONSENT.retentionDays);$('#analyticsWithdraw').disabled=!on;
+  const state=$('#analyticsState');state.classList.toggle('off',!on);state.textContent=on?`분석 동의 ON · 보존 ${ANALYTICS_CONSENT.retentionDays}일 · 현재 외부 전송 없음`:'분석 수집 OFF · 외부 전송 없음';
+  $('#analyticsStorage').textContent=analyticsConsentStorage==='persistent'?'✓ 이 선택은 이 기기에 저장됩니다':'⚠ 저장소를 쓸 수 없어 화면을 닫기 전까지만 선택을 기억합니다';
+}
+$('#analyticsOptIn').onchange=()=>{$('#analyticsRetention').disabled=!$('#analyticsOptIn').checked};
+$('#analyticsSave').onclick=()=>{try{const enabled=$('#analyticsOptIn').checked;const next=analyticsConsentDecide({enabled,explicit:enabled,retentionDays:$('#analyticsRetention').value});analyticsConsentWrite(next);toast(enabled?'분석 동의를 저장했어요. 현재 외부 전송은 없습니다.':'분석 수집을 꺼진 상태로 저장했어요.',3600)}catch(e){toast('분석 선택을 저장하지 못했어요: '+e.message,3500)}};
+$('#analyticsWithdraw').onclick=()=>{analyticsConsentWrite(analyticsConsentDecide({enabled:false,retentionDays:30}));toast('분석 동의를 철회했어요. 수집은 꺼진 상태입니다.',3400)};
+analyticsConsentRead();
 
 /* ============ 요금제 데모 전환 ============ */
 $$('.plan').forEach(p=>p.querySelector('.pbtn2').onclick=()=>{
