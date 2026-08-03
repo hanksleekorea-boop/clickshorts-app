@@ -141,6 +141,13 @@ canvas{width:100%;height:100%;display:block}
 .previs-card{margin-top:14px;padding:15px;border:1px solid rgba(122,92,255,.55);border-radius:16px;background:linear-gradient(135deg,rgba(122,92,255,.12),rgba(255,61,113,.07))}
 .previs-card h3{font-size:15px;margin-bottom:5px}.previs-card p{font-size:12px;line-height:1.55;color:var(--sub)}
 .previs-card .pbtn{width:100%;margin-top:11px}.previs-card .packstate{font-size:11px;color:var(--sub);margin-top:8px;min-height:16px}
+.gazer-panel{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.gazer-presets{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.gazer-presets button{border:1px solid var(--line);background:var(--card2);color:var(--sub);border-radius:999px;padding:7px 9px;font-size:11px;cursor:pointer}
+.gazer-presets button.on{border-color:var(--pri);color:#fff;background:rgba(255,61,113,.15)}
+.gazer-panel textarea{width:100%;min-height:62px;resize:vertical;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:9px;font:12px/1.5 inherit}
+.gazer-options{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;color:var(--sub);font-size:11px}.gazer-options input[type=range]{width:92px}.gazer-options label{display:flex;align-items:center;gap:5px}
+.gazer-result{display:none;margin-top:10px}.gazer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.gaze{background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:10px;padding:8px}.gaze b{display:block;font-size:11px}.gaze strong{font-size:18px;color:var(--ok)}.gaze span{font-size:9px;color:var(--sub);line-height:1.35;display:block}
+.gazer-summary{font-size:11px;line-height:1.55;margin-top:8px;color:var(--sub)}.gazer-actions{display:flex;gap:7px}.gazer-actions .pbtn{flex:1}.gazer-actions .undo{display:none}
 .recbadge{position:absolute;top:10px;left:10px;background:rgba(255,61,113,.9);color:#fff;font-size:11px;font-weight:800;border-radius:8px;padding:3px 8px;display:none;z-index:5}
 /* my videos */
 .vitem{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
@@ -177,7 +184,7 @@ nav button.on{color:var(--pri)}
 <body>
 <div id="app">
 <header>
-  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.2</span></div>
+  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.3</span></div>
   <button id="installBtn">📲 앱 설치</button>
 </header>
 <main>
@@ -261,6 +268,18 @@ nav button.on{color:var(--pri)}
   <div class="previs-card">
     <h3>🎞 프리비스팩 — 고품질 영상 제작 준비</h3>
     <p>저해상도 장면 기준 이미지, 장면별 생성 프롬프트, 자막, 편집표, 보이스·BGM·효과음 지시를 ZIP 하나로 묶습니다. 힉스필드·시댄스 등 유료 생성 전에 장면과 타이밍을 먼저 확정하세요.</p>
+    <button class="pbtn" id="gazerBtn">🔭 트리플게이저로 원하는 방향 보정</button>
+    <div class="gazer-panel" id="gazerPanel">
+      <p><b style="color:var(--txt)">세 관점 동시 점검</b> · 이야기/메시지 · 화면/연출 · 음성/리듬</p>
+      <div class="gazer-presets" id="gazerPresets">
+        <button data-dir="impact" class="on">🔥 더 강렬하게</button><button data-dir="clear">🧭 더 명확하게</button><button data-dir="trust">🤝 더 신뢰감 있게</button><button data-dir="emotion">💗 더 감성적으로</button><button data-dir="premium">✨ 더 고급스럽게</button>
+      </div>
+      <textarea id="gazerGoal" maxlength="180" placeholder="원하는 방향을 더 적어도 됩니다. 예: 첫 3초는 긴박하게, 뒤에는 차분하게"></textarea>
+      <div class="gazer-options"><label>보정 강도 <input type="range" id="gazerStrength" min="1" max="3" value="2"><b id="gazerStrengthTxt">표준</b></label><label><input type="checkbox" id="gazerRewrite"> 대본도 보수적으로 다듬기</label></div>
+      <button class="pbtn main" id="gazerAnalyze">세 관점 진단하기</button>
+      <div class="gazer-result" id="gazerResult"></div>
+      <div class="gazer-actions"><button class="pbtn main" id="gazerApply" style="display:none">✓ 보정 적용</button><button class="pbtn undo" id="gazerUndo">↶ 원본으로 되돌리기</button></div>
+    </div>
     <button class="pbtn main" id="previsBtn">📦 프리비스팩 ZIP 만들기</button>
     <div class="packstate" id="previsState">외부 서비스로 자동 전송하지 않습니다 · 독립 음성 파일은 포함되지 않습니다</div>
   </div>
@@ -1082,6 +1101,69 @@ $('#replayBtn').onclick=()=>play();
 $('#muteBtn').onclick=function(){S.muted=!S.muted;this.textContent=S.muted?'🔇 무음':'🔊 소리';if(S.muted){stopTTS();stopBGM()}else if(S.playing){startBGM();speakScene(S.sceneIdx)}};
 $('#backBtn').onclick=()=>{stopAll();$('#tunePanel').style.display='none';switchView('v-make')};
 
+/* TRIPLE_GAZER_CORE_START — 이야기·화면·사운드 3관점 보정 코어 */
+const TRIPLE_GAZER_DIRECTIONS={
+  impact:{name:'더 강렬하게',tone:'urgent',rate:1.2,durationFactor:0.92,palette:{g:['#180714','#4C0B28'],ac:'#FF315F'},camera:'빠른 푸시인과 짧은 전환, 첫 장면 즉시 피사체 제시',motion:'강한 시작 뒤 안정',sound:'첫 훅 임팩트와 전환 우시',bgm:'타격감 있는 빠른 비트',story:'첫 3초의 갈등·결론을 앞으로 당기기'},
+  clear:{name:'더 명확하게',tone:'calm',rate:1.05,durationFactor:1.0,palette:{g:['#071A2E','#123B54'],ac:'#42C7FF'},camera:'안정된 정면 구도와 한 장면 한 메시지',motion:'필요한 움직임만 사용',sound:'대사 우선, 효과음 최소화',bgm:'낮은 음량의 단순한 리듬',story:'군더더기를 줄이고 핵심→근거→행동 순서로 정리'},
+  trust:{name:'더 신뢰감 있게',tone:'deep',rate:0.9,durationFactor:1.06,palette:{g:['#071525','#17324B'],ac:'#68B8E8'},camera:'고정 또는 매우 느린 이동, 과장된 효과 배제',motion:'차분하고 예측 가능한 전환',sound:'또렷한 낮은 톤과 충분한 호흡',bgm:'절제된 저음 패드',story:'확인 가능한 사실과 한계를 분리하고 절대 표현 완화'},
+  emotion:{name:'더 감성적으로',tone:'calm',rate:0.9,durationFactor:1.08,palette:{g:['#211027','#4A213C'],ac:'#FF92B8'},camera:'느린 푸시인과 여백이 있는 인물 중심 구도',motion:'부드러운 디졸브 느낌',sound:'호흡과 문장 끝 여운 강조',bgm:'따뜻한 패드와 잔잔한 멜로디',story:'상황→감정 변화→여운이 남는 결말로 연결'},
+  premium:{name:'더 고급스럽게',tone:'deep',rate:1.05,durationFactor:1.03,palette:{g:['#090A0D','#202027'],ac:'#D9B66F'},camera:'절제된 슬로우 패닝, 대칭과 음영 강조',motion:'전환 수를 줄이고 한 동작을 정확히',sound:'깨끗한 음성, 저역 과다 사용 금지',bgm:'미니멀한 질감과 넓은 공간감',story:'과장과 반복을 덜어 핵심 문장에 무게 부여'}
+};
+function gazerClamp(n,min=0,max=100){return Math.max(min,Math.min(max,n))}
+function gazerRewriteText(text,direction){
+  let t=String(text||'').trim().replace(/\s+/g,' ');
+  if(direction==='trust')t=t.replace(/무조건/g,'대체로').replace(/절대/g,'가능한 한').replace(/100%/g,'높은 가능성으로');
+  if(direction==='clear')t=t.replace(/^(사실은|솔직히 말하면|정리하면)[,\s]*/,'').replace(/([!?。])\1+/g,'$1');
+  if(direction==='premium')t=t.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').replace(/!{2,}/g,'!').trim();
+  if(direction==='impact'&&!/[!?]$/.test(t))t=t.replace(/[.]$/,'')+'!';
+  if(direction==='emotion')t=t.replace(/!+$/,'…');
+  return t||String(text||'');
+}
+function tripleGazerAnalyze(input){
+  const direction=TRIPLE_GAZER_DIRECTIONS[input.direction]?input.direction:'clear',preset=TRIPLE_GAZER_DIRECTIONS[direction];
+  const strength=gazerClamp(Number(input.strength)||2,1,3),scenes=(input.scenes||[]),spoken=scenes.filter(s=>!s.hook),first=(spoken[0]?.text||''),last=(spoken.at(-1)?.text||''),all=spoken.map(s=>s.text).join(' ');
+  const avg=spoken.length?spoken.reduce((n,s)=>n+s.text.length,0)/spoken.length:0;
+  const messageBefore=gazerClamp(36+(/[?？]|\d/.test(first)?16:0)+(/(이유|방법|비밀|실수|결론)/.test(first)?12:0)+(avg>=12&&avg<=38?14:4)+(/(저장|공유|댓글|팔로우|구독|확인)/.test(last)?16:4));
+  const visualBefore=gazerClamp(45+(input.tpl?.g?.length===2?16:0)+(input.tpl?.ac?12:0)+(scenes.length>=4&&scenes.length<=14?12:5));
+  const audioBefore=gazerClamp(43+(input.tone?12:0)+(Number(input.rate)>=.85&&Number(input.rate)<=1.25?14:5)+(input.tpl?.tempo?10:0));
+  const lift=6+strength*4;
+  const rewrite=Boolean(input.rewrite);
+  const scenePlan=scenes.map((sc,i)=>({scene:i+1,hook:Boolean(sc.hook),originalText:sc.text,suggestedText:rewrite?gazerRewriteText(sc.text,direction):sc.text,messageAction:sc.hook?preset.story:(i===scenes.length-1?'마무리 행동을 한 가지로 선명하게':preset.story),visualAction:preset.camera,audioAction:sc.hook?'짧은 임팩트 뒤 음성 진입':preset.sound}));
+  return {engine:'triple-gazer/v1',direction,directionName:preset.name,creativeGoal:String(input.goal||'').trim(),strength,rewriteRequested:rewrite,generatedAt:new Date().toISOString(),gazes:{message:{label:'이야기·메시지',before:messageBefore,after:gazerClamp(messageBefore+lift),reason:`평균 ${avg.toFixed(1)}자 · 훅/마무리/문장 밀도 규칙 점검`,action:preset.story},visual:{label:'화면·연출',before:visualBefore,after:gazerClamp(visualBefore+lift),reason:'팔레트·장면 수·시선 집중 규칙 점검',action:preset.camera},audio:{label:'음성·리듬',before:audioBefore,after:gazerClamp(audioBefore+lift),reason:'음성 속도·톤·템포·효과음 여백 점검',action:`${preset.sound} · ${preset.bgm}`}},proposal:{tone:preset.tone,rate:preset.rate,durationFactor:preset.durationFactor,palette:preset.palette,camera:preset.camera,motion:preset.motion,sound:preset.sound,bgm:preset.bgm,story:preset.story},scenePlan,safeguards:['준비도 점수는 조회수나 외부 생성 품질 예측이 아닙니다.','사용자 확인 전 원본을 덮어쓰지 않습니다.','대본 자동 보정은 별도 선택 시에만 적용하며 새 사실을 만들지 않습니다.']};
+}
+if(typeof globalThis!=='undefined')globalThis.__tripleGazerCore={TRIPLE_GAZER_DIRECTIONS,gazerRewriteText,tripleGazerAnalyze};
+/* TRIPLE_GAZER_CORE_END */
+
+function gazerEsc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderGazerReport(r,applied=false){
+  const cards=Object.values(r.gazes).map(g=>`<div class="gaze"><b>${gazerEsc(g.label)}</b><strong>${g.before}→${g.after}</strong><span>${gazerEsc(g.reason)}</span></div>`).join('');
+  $('#gazerResult').innerHTML=`<div class="gazer-grid">${cards}</div><div class="gazer-summary"><b style="color:var(--txt)">${gazerEsc(r.directionName)}</b>${r.creativeGoal?` · 목표: ${gazerEsc(r.creativeGoal)}`:''}<br>이야기: ${gazerEsc(r.proposal.story)}<br>화면: ${gazerEsc(r.proposal.camera)}<br>소리: ${gazerEsc(r.proposal.sound)}${applied?'<br><b style="color:var(--ok)">✓ 현재 프리비스에 적용됨</b>':'<br>아직 원본은 바뀌지 않았습니다.'}</div>`;
+  $('#gazerResult').style.display='block';$('#gazerApply').style.display=applied?'none':'block';$('#gazerUndo').style.display=S.gazerUndo?'block':'none';
+}
+$('#gazerBtn').onclick=()=>{const p=$('#gazerPanel');p.style.display=p.style.display==='block'?'none':'block';if(p.style.display==='block')p.scrollIntoView({behavior:'smooth',block:'nearest'})};
+$('#gazerPresets').onclick=e=>{const b=e.target.closest('button[data-dir]');if(!b)return;$$('#gazerPresets button').forEach(x=>x.classList.remove('on'));b.classList.add('on')};
+$('#gazerStrength').oninput=e=>{$('#gazerStrengthTxt').textContent=({1:'가볍게',2:'표준',3:'강하게'})[e.target.value]};
+$('#gazerAnalyze').onclick=()=>{
+  const dir=$('#gazerPresets .on')?.dataset.dir||'clear';
+  S.gazerDraft=tripleGazerAnalyze({direction:dir,strength:Number($('#gazerStrength').value),goal:$('#gazerGoal').value,rewrite:$('#gazerRewrite').checked,scenes:S.scenes.map(s=>({...s})),tpl:S.tpl,tone:S.tone,rate:S.rate});
+  renderGazerReport(S.gazerDraft);toast('세 관점 진단이 끝났어요. 적용 전 변경 방향을 확인하세요.');
+};
+$('#gazerApply').onclick=()=>{
+  const r=S.gazerDraft;if(!r){toast('먼저 세 관점 진단을 실행해 주세요');return}
+  stopAll(false);
+  S.gazerUndo={scenes:S.scenes.map(s=>({...s})),tpl:{...S.tpl,g:[...S.tpl.g]},tone:S.tone,rate:S.rate,score:S.score,gazerActive:S.gazerActive||null};
+  S.gazerActive=r;S.tone=r.proposal.tone;S.rate=r.proposal.rate;S.tpl={...S.tpl,g:[...r.proposal.palette.g],ac:r.proposal.palette.ac};$('#voiceTone').value=S.tone;$('#voiceRate').value=String(S.rate);
+  S.scenes=S.scenes.map((sc,i)=>{const text=r.scenePlan[i].suggestedText;return {...sc,text,dur:gazerClamp(sc.dur*r.proposal.durationFactor,.65,8),accent:sc.accent||autoAccent(text)}});
+  const total=totalDur();if(total>59.5){const scale=59.5/total;S.scenes.forEach(sc=>sc.dur=Math.max(.65,sc.dur*scale))}
+  if(r.rewriteRequested&&S.scenes[0]?.hook){const fresh=makeHook(S.scenes.filter(s=>!s.hook));if(fresh)S.scenes[0]={...fresh,dur:S.scenes[0].dur}}
+  S.score=predictScore(S.scenes.filter(s=>!s.hook));$('#playInfo').textContent=`${S.tpl.name} · ${S.scenes.length}장면 · ${Math.round(totalDur())}초 · ${r.directionName}`;
+  renderScore();renderGazerReport(r,true);play();toast(`🔭 ${r.directionName} 보정을 적용했어요`);
+};
+$('#gazerUndo').onclick=()=>{
+  const u=S.gazerUndo;if(!u)return;stopAll(false);S.scenes=u.scenes;S.tpl=u.tpl;S.tone=u.tone;S.rate=u.rate;S.score=u.score;S.gazerActive=u.gazerActive;S.gazerUndo=null;S.gazerDraft=null;$('#voiceTone').value=S.tone;$('#voiceRate').value=String(S.rate);
+  $('#gazerResult').style.display='none';$('#gazerApply').style.display='none';$('#gazerUndo').style.display='none';$('#playInfo').textContent=`${S.tpl.name} · ${S.scenes.length}장면 · ${Math.round(totalDur())}초`;renderScore();play();toast('트리플게이저 적용 전 원본으로 되돌렸어요');
+};
+
 /* PREVIS_CORE_START — DOM 비의존 ZIP/SRT 코어: 테스트에서 이 구간을 직접 검증한다. */
 const PREVIS_ENCODER=new TextEncoder();
 function pvBytes(v){return v instanceof Uint8Array?v:PREVIS_ENCODER.encode(String(v))}
@@ -1111,7 +1193,8 @@ function previsCsv(v){const s=String(v??'');return /[",\r\n]/.test(s)?`"${s.repl
 function previsTimeline(){let at=0;return S.scenes.map((sc,i)=>{const row={scene:i+1,start:Number(at.toFixed(3)),end:Number((at+sc.dur).toFixed(3)),duration:Number(sc.dur.toFixed(3)),text:sc.text,accent:sc.accent||'',hook:!!sc.hook};at+=sc.dur;return row})}
 function previsPrompt(row){
   const kind=row.hook?'첫 1초 훅 프레임, 즉시 시선을 잡는 강한 타이포그래피':'세로형 쇼츠의 단일 장면';
-  return `${kind}. 주제/내레이션: "${row.text}". 9:16 세로 구도, ${S.tpl.name} 분위기, 기본색 ${S.tpl.g.join(' 및 ')}, 강조색 ${S.tpl.ac}. 주 피사체와 배경을 단순하고 명확하게 유지. 장면 길이 ${row.duration}초. 자연스러운 미세 움직임과 안정적인 카메라, 읽을 수 있는 자막용 중앙 안전영역 확보. 로고·워터마크·왜곡된 글자·과도한 장면 전환 제외.`;
+  const g=S.gazerActive,plan=g?.scenePlan?.[row.scene-1],direction=g?` 트리플게이저 방향: ${g.directionName}. 사용자 목표: ${g.creativeGoal||'프리셋 기준'}. 화면 지시: ${plan?.visualAction||g.proposal.camera}. 사운드 지시: ${plan?.audioAction||g.proposal.sound}.`:'';
+  return `${kind}. 주제/내레이션: "${row.text}". 9:16 세로 구도, ${S.tpl.name} 분위기, 기본색 ${S.tpl.g.join(' 및 ')}, 강조색 ${S.tpl.ac}. 주 피사체와 배경을 단순하고 명확하게 유지. 장면 길이 ${row.duration}초.${direction} 자연스러운 움직임과 읽을 수 있는 자막용 중앙 안전영역 확보. 로고·워터마크·왜곡된 글자·과도한 장면 전환 제외.`;
 }
 function previsToneLabel(){return ({calm:'차분하고 신뢰감 있게',bright:'밝고 친근하게',deep:'낮고 무게감 있게',urgent:'빠르고 긴박하게'})[S.tone]||'자연스럽게'}
 function previsPngBlob(){return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(new Error('PNG 변환 실패')),'image/png'))}
@@ -1131,13 +1214,18 @@ async function buildPrevisPack(){
   }
   drawScene(Math.min(S.sceneIdx,S.scenes.length-1),0.15,0.15);
   const generated=new Date(),verified='2026-08-03';
-  const manifest={schema:'clickshorts-previs-pack/v1',generator:'ClickShorts alpha v1.2',generatedAt:generated.toISOString(),aspectRatio:'9:16',frameSize:{width:405,height:720},duration:Number(totalDur().toFixed(3)),template:{id:S.tpl.id,name:S.tpl.name,palette:[...S.tpl.g,S.tpl.ac]},voice:{language:'ko-KR',tone:S.tone,rate:S.rate,standaloneAudioIncluded:false},scenes:rows,files:{storyboard:S.scenes.length,captions:'subtitles/captions.srt',editPlan:'edit/edit-plan.json'},limitations:['스토리보드 PNG는 구도·색·자막 위치 확인용 저해상도 프리비스입니다.','브라우저 음성합성은 독립 음성 파일로 안정적으로 추출할 수 없어 대본과 디렉션만 제공합니다.','외부 영상 생성 서비스에 자동 업로드하거나 결과 품질을 보장하지 않습니다.']};
-  const readme=`클릭쇼츠 프리비스팩\n====================\n\n목적: 비용이 드는 고품질 영상 생성 전에 장면, 구도, 대본, 타이밍, 음향 지시를 먼저 확정합니다.\n\n권장 순서\n1. storyboard/ 프레임과 edit/edit-plan.csv로 장면 순서를 검토합니다.\n2. prompts/의 장면별 프롬프트를 복사하고 해당 PNG를 참조 이미지로 넣습니다.\n3. 가장 중요한 1~2장면만 먼저 저비용/초안 설정으로 생성해 피사체·카메라·텍스트 안전영역을 확인합니다.\n4. 통과한 설정으로 나머지 장면을 생성합니다.\n5. subtitles/captions.srt와 audio/ 지시표를 편집기에 적용합니다.\n\n중요한 한계\n- PNG는 405×720 저해상도 프리비스이며 최종 미술 에셋이 아닙니다.\n- 독립 음성/BGM 파일은 포함되지 않습니다. 정확한 대본·톤·속도·사운드 큐를 제공합니다.\n- 힉스필드·시댄스의 입력 방식과 제한은 바뀔 수 있습니다. 서비스별 파일의 확인일과 실제 화면을 함께 확인하세요.\n- 이 ZIP은 어떤 외부 서비스에도 자동 전송되지 않습니다.\n`;
+  const manifest={schema:'clickshorts-previs-pack/v2',generator:'ClickShorts alpha v1.3',generatedAt:generated.toISOString(),aspectRatio:'9:16',frameSize:{width:405,height:720},duration:Number(totalDur().toFixed(3)),template:{id:S.tpl.id,name:S.tpl.name,palette:[...S.tpl.g,S.tpl.ac]},voice:{language:'ko-KR',tone:S.tone,rate:S.rate,standaloneAudioIncluded:false},correction:S.gazerActive?{engine:S.gazerActive.engine,direction:S.gazerActive.direction,directionName:S.gazerActive.directionName,creativeGoal:S.gazerActive.creativeGoal,strength:S.gazerActive.strength,rewriteApplied:S.gazerActive.rewriteRequested}:null,scenes:rows,files:{storyboard:S.scenes.length,captions:'subtitles/captions.srt',editPlan:'edit/edit-plan.json',correction:'correction/triple-gazer-status.txt'},limitations:['스토리보드 PNG는 구도·색·자막 위치 확인용 저해상도 프리비스입니다.','트리플게이저 준비도 점수는 조회수나 외부 생성 품질 예측이 아닙니다.','브라우저 음성합성은 독립 음성 파일로 안정적으로 추출할 수 없어 대본과 디렉션만 제공합니다.','외부 영상 생성 서비스에 자동 업로드하거나 결과 품질을 보장하지 않습니다.']};
+  const readme=`클릭쇼츠 프리비스팩\n====================\n\n목적: 비용이 드는 고품질 영상 생성 전에 장면, 구도, 대본, 타이밍, 음향 지시를 먼저 확정합니다.\n\n권장 순서\n1. correction/에서 트리플게이저 적용 방향과 세 관점 진단을 확인합니다.\n2. storyboard/ 프레임과 edit/edit-plan.csv로 장면 순서를 검토합니다.\n3. prompts/의 장면별 프롬프트를 복사하고 해당 PNG를 참조 이미지로 넣습니다.\n4. 가장 중요한 1~2장면만 먼저 저비용/초안 설정으로 생성해 피사체·카메라·텍스트 안전영역을 확인합니다.\n5. 통과한 설정으로 나머지 장면을 생성하고 subtitles/와 audio/ 지시표를 적용합니다.\n\n중요한 한계\n- PNG는 405×720 저해상도 프리비스이며 최종 미술 에셋이 아닙니다.\n- 트리플게이저 준비도 점수는 제작 점검용 규칙 결과이며 조회수·시청 유지율·외부 생성 품질 예측이 아닙니다.\n- 독립 음성/BGM 파일은 포함되지 않습니다. 정확한 대본·톤·속도·사운드 큐를 제공합니다.\n- 힉스필드·시댄스의 입력 방식과 제한은 바뀔 수 있습니다. 서비스별 파일의 확인일과 실제 화면을 함께 확인하세요.\n- 이 ZIP은 어떤 외부 서비스에도 자동 전송되지 않습니다.\n`;
   files.push({name:'README_FIRST_KO.txt',data:readme});
   files.push({name:'manifest.json',data:JSON.stringify(manifest,null,2)});
   files.push({name:'subtitles/captions.srt',data:previsBuildSrt(S.scenes)});
   files.push({name:'edit/edit-plan.json',data:JSON.stringify(rows,null,2)});
   files.push({name:'edit/edit-plan.csv',data:'scene,start_sec,end_sec,duration_sec,type,text,accent\r\n'+rows.map(r=>[r.scene,r.start,r.end,r.duration,r.hook?'hook':'scene',r.text,r.accent].map(previsCsv).join(',')).join('\r\n')});
+  files.push({name:'correction/triple-gazer-status.txt',data:S.gazerActive?`적용됨: ${S.gazerActive.directionName}\n강도: ${S.gazerActive.strength}/3\n사용자 목표: ${S.gazerActive.creativeGoal||'프리셋 기준'}\n대본 보정: ${S.gazerActive.rewriteRequested?'적용':'미적용'}\n\n주의: 준비도 점수는 성과나 외부 생성 품질을 예측하지 않습니다.`:'미적용\n\n앱 완성 화면에서 트리플게이저로 원하는 방향을 진단·적용하면 세 관점 보고서와 보정 지시가 이 폴더에 함께 들어갑니다.'});
+  if(S.gazerActive){
+    files.push({name:'correction/triple-gazer-report.json',data:JSON.stringify(S.gazerActive,null,2)});
+    files.push({name:'correction/creative-direction.txt',data:`방향: ${S.gazerActive.directionName}\n사용자 목표: ${S.gazerActive.creativeGoal||'프리셋 기준'}\n\n이야기·메시지\n${S.gazerActive.proposal.story}\n\n화면·연출\n${S.gazerActive.proposal.camera}\n모션: ${S.gazerActive.proposal.motion}\n\n음성·리듬\n${S.gazerActive.proposal.sound}\nBGM: ${S.gazerActive.proposal.bgm}\n톤/속도: ${S.gazerActive.proposal.tone} / ${S.gazerActive.proposal.rate}`});
+  }
   files.push({name:'prompts/universal-video-prompts.txt',data:rows.map(r=>`[장면 ${String(r.scene).padStart(3,'0')} | ${r.start}s–${r.end}s]\n참조 이미지: storyboard/scene-${String(r.scene).padStart(3,'0')}.png\n${previsPrompt(r)}`).join('\n\n')});
   files.push({name:'prompts/higgsfield-guide.txt',data:`힉스필드 적용 가이드 (공식 공개 페이지 확인일 ${verified})\n\n- 장면별 PNG를 이미지/스토리보드 참조로 넣고 같은 번호의 universal 프롬프트를 사용하세요.\n- 카메라 프리셋을 쓸 때는 먼저 안정적인 미세 움직임으로 1개 장면을 시험하고, 통과 뒤 강한 움직임을 적용하세요.\n- 화면이나 지원 입력은 변경될 수 있으므로 자동 가져오기 파일이 아닌 제작 가이드입니다.\n\n${rows.map(r=>`장면 ${r.scene}: ${previsPrompt(r)}`).join('\n\n')}`});
   files.push({name:'prompts/seedance-guide.txt',data:`시댄스 적용 가이드 (ByteDance Seed 공식 공개 자료 확인일 ${verified})\n\n- 텍스트와 storyboard PNG를 함께 참조하고, 지원 버전에서는 오디오/영상 참조를 추가할 수 있습니다.\n- 먼저 1개 장면으로 주체 일관성·카메라·동작을 확인한 뒤 다중 장면을 생성하세요.\n- 이 파일은 서비스 중립 프롬프트를 옮기기 위한 가이드이며 자동 가져오기 형식을 보장하지 않습니다.\n\n${rows.map(r=>`장면 ${r.scene}: ${previsPrompt(r)}`).join('\n\n')}`});
@@ -1145,7 +1233,7 @@ async function buildPrevisPack(){
   const arr=ARR[S.tpl.id]||ARR.know;
   files.push({name:'audio/sound-cue-sheet.csv',data:'time_sec,scene,cue,notes\r\n'+rows.map(r=>[r.start,r.scene,r.hook?'impact/whoosh':'voice + subtle bed',r.hook?'첫 훅 시작에 짧고 강한 임팩트':'대사 명료도 우선, 전환부에만 약한 효과음'].map(previsCsv).join(',')).join('\r\n')});
   files.push({name:'audio/bgm-direction.txt',data:`템포: ${S.tpl.tempo} BPM\n드럼: ${arr.drums}\n패드: ${arr.pad?'사용':'미사용'}\n아르페지오: ${arr.arp}\n분위기: ${S.tpl.name}\n\n내레이션보다 낮은 음량을 유지하고, 훅과 장면 전환에서만 에너지를 올리세요. 저작권과 상업 사용 조건은 최종 음원별로 직접 확인해야 합니다.`});
-  files.push({name:'references/style-guide.json',data:JSON.stringify({aspectRatio:'9:16',safeZone:'중앙 80%, 상하 UI 영역 회피',template:S.tpl.name,colors:{background:S.tpl.g,accent:S.tpl.ac},typography:{weight:S.tpl.font,caption:'high contrast, centered'},storyboardPurpose:'composition, timing, text-safe-zone reference only'},null,2)});
+  files.push({name:'references/style-guide.json',data:JSON.stringify({aspectRatio:'9:16',safeZone:'중앙 80%, 상하 UI 영역 회피',template:S.tpl.name,colors:{background:S.tpl.g,accent:S.tpl.ac},typography:{weight:S.tpl.font,caption:'high contrast, centered'},tripleGazer:S.gazerActive?{direction:S.gazerActive.directionName,goal:S.gazerActive.creativeGoal,camera:S.gazerActive.proposal.camera,motion:S.gazerActive.proposal.motion}:null,storyboardPurpose:'composition, timing, text-safe-zone reference only'},null,2)});
   return {zip:previsZipStored(files),count:files.length,sceneCount:frames.length};
 }
 $('#previsBtn').onclick=async()=>{
