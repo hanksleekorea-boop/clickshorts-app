@@ -187,13 +187,31 @@ nav button.on{color:var(--pri)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:#000c;color:#fff;border-radius:12px;padding:10px 16px;font-size:12.5px;z-index:50;display:none;max-width:80%;text-align:center}
 .note{background:rgba(122,92,255,.08);border:1px solid rgba(122,92,255,.3);border-radius:12px;padding:10px 12px;font-size:11.5px;color:var(--sub);line-height:1.6;margin-top:14px}
 .sect{margin-bottom:22px}
+
+/* v1.6 후보: 어느 화면에서든 공개 앱 QR을 바로 보여준다. */
+.header-actions{display:flex;align-items:center;gap:7px}
+#qrBtn{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-weight:800;font-size:12px;cursor:pointer}
+#qrBtn:focus-visible,.qr-actions a:focus-visible,.qr-actions button:focus-visible,.qr-close:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.qr-modal{position:fixed;inset:0;z-index:120;background:rgba(4,5,12,.82);display:none;align-items:center;justify-content:center;padding:18px}
+.qr-modal.open{display:flex}
+.qr-dialog{width:min(392px,100%);max-height:calc(100dvh - 36px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 28px 80px #000b;text-align:center;position:relative}
+.qr-close{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--txt);font-size:20px;cursor:pointer}
+.qr-dialog h2{font-size:21px;margin:5px 34px 6px}.qr-dialog>p{color:var(--sub);font-size:12.5px;line-height:1.55}
+.qr-image{display:block;width:min(248px,76vw);height:auto;margin:18px auto 12px;background:#fff;border:12px solid #fff;border-radius:18px}
+.qr-url{display:block;color:var(--sub);background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:9px;overflow-wrap:anywhere;font-size:10.5px;line-height:1.45}
+.qr-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.qr-actions a,.qr-actions button{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:12px;font:800 13px inherit;text-decoration:none;cursor:pointer}
+.qr-actions a{background:var(--grad);color:#fff}.qr-actions button{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.qr-tip{margin-top:11px!important;font-size:11px!important;color:var(--sub)}
+@media(max-width:360px){#qrBtn{padding:7px 8px}.logo{font-size:17px}.logo .beta{display:none}}
+
 </style>
 </head>
 <body>
 <div id="app">
 <header>
-  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.5</span></div>
-  <button id="installBtn">📲 앱 설치</button>
+  <div class="logo"><div class="mark">▶</div>클릭쇼츠<span class="beta">알파 v1.6 후보</span></div>
+  <div class="header-actions"><button id="qrBtn" type="button" aria-label="앱 QR 코드 보기">▦ QR</button><button id="installBtn">📲 앱 설치</button></div>
 </header>
 <main>
 
@@ -376,6 +394,19 @@ nav button.on{color:var(--pri)}
   <div class="bn-d">Safari 하단의 <b>공유 버튼(□↑)</b>을 누르고<br><b>'홈 화면에 추가'</b>를 선택하세요.</div>
   <div class="bn-row"><button id="igOk">확인했어요</button></div>
 </div>
+
+<div class="qr-modal" id="qrModal" aria-hidden="true">
+  <section class="qr-dialog" role="dialog" aria-modal="true" aria-labelledby="qrTitle" aria-describedby="qrDesc">
+    <button class="qr-close" id="qrClose" type="button" aria-label="QR 창 닫기">×</button>
+    <h2 id="qrTitle">📱 휴대폰에서 앱 열기</h2>
+    <p id="qrDesc">휴대폰 카메라로 스캔하면 현재 공개 앱이 바로 열립니다.</p>
+    <img class="qr-image" alt="클릭쇼츠 공개 앱 QR 코드" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAewAAAHsAQAAAAA4UaPNAAADmklEQVR4nO2dW27jMAxFKaL/zg5m/8vqDuwVcECReiST+bky0Li+BwFGSXSQRmZZWpY1xWSBQ1dsEeowiqsOdRjFVYc6jOKqQx1GcdWhDqO46lCHUVx1qMMorjrUpXQeIkeRwxv5KMUH6Siv3RwOHYziqkN9eeg2C6IdIW3fpT8tf+y1m8ORh1FcdajDfPWWx/e290apDYtHzfzzu5Jw5GEUVx3qJ8T8TIZ6bZdt91Rffwv+QWUJpY6isCl317/+90YPcouwP4r9tu+u1G8+dGZmUbNs5hG+Z/Xu7e8yivze7ZN+eAjFtAb1i+f546lyKbWYyWzvbSvvugmPO44uuEJ9Pebt3XvxYpzAZvu1i658tlDH0QVX7q1Lzj1uLZw3L12ygIl2fRo9R59gv/R3V+o3r21sbhyPmLeJGUuftDzyKlQ0Sk5XXvq7K/U753mrqT5OTmsC9/TeO2Rir5k/Hgnz/E3DRn9DbSMj1Fs8t2Kmlj1jGide2Rjz+qMHTqnDWCOfP9fwGeet2h9/CALmeRxdcIX6CpbRO5U0vYCJyJ9qnv4bIczzwqC99jlsiX9iHj5W17Sz17HGJs9ea6kjp3y6UkdR2JS765J5fsrhr/OTLc9n/57kjbXNbcNGf838vLU5+fFuO6V9PZPdGPP6owdOqcNYhPT0dFx+isI+Xu+ZvxX8Ds9hcXTBFeorWNBXl7V6Zm6PE9upj8OYx9EFV6ivYI2pSs+SfszeTI8na+eBg1FcdaifsX7+8Duh2nJKn8DJ5Qc18uf1lH0dgnDkcXTBFeorWE/yU3rPJN86jEa/H3ZjntelcRfqHzBvs41y/W2d83RBNmBtg6MLrlA/7d7ALe8BLG1pZVyBygtV28718xMqSyj1T5mfl7GWrGbydjLb6X8CjHl+BV2yhfrq0FlfWhPVe70fNm6AjV2e5ne5p1OFUXfx67Cdfp/UtLT4aYqe8/MJY/7iQ7dlmEdizx38Kr53X93KL4sfL+zt5E8HUVQMqN9z6GSu50cmn6ZxxpKbSRHOVcqlj7veWP96/3Lf6KBn9Xodqk/pyDmfrtRRFDYr1N/RTmPzZDauxpa219MenTh0MIqrDvUT8rzNjbqVU7aPR5+cjxn7tumBcOQX0BVZqJ+6j1mpIe1VzbQ1cWkdYptiy748cDCKqw51mML/Qw1FYbNCHUZx1aEOo7jqUIdRXHWowyiuOtRhFFcd6jCKqw51mMWh+wvxu9aPpxcAAQAAAABJRU5ErkJggg==">
+    <code class="qr-url">https://hanksleekorea-boop.github.io/clickshorts/</code>
+    <div class="qr-actions"><a id="qrOpen" href="https://hanksleekorea-boop.github.io/clickshorts/" target="_blank" rel="noopener">앱 바로 열기</a><button id="qrCopy" type="button">주소 복사</button></div>
+    <p class="qr-tip">같은 휴대폰에서 보고 있다면 ‘앱 바로 열기’를 누르세요.</p>
+  </section>
+</div>
+
 <div class="toast" id="toast"></div>
 </div>
 
@@ -1511,6 +1542,25 @@ function switchView(id){
   window.scrollTo(0,0);
 }
 $$('nav button').forEach(b=>b.onclick=()=>switchView(b.dataset.v));
+
+
+/* QR_ACCESS_V1_6_START */
+const PUBLIC_APP_URL='https://hanksleekorea-boop.github.io/clickshorts/';
+const qrModal=$('#qrModal'),qrButton=$('#qrBtn'),qrClose=$('#qrClose');
+let qrPreviousFocus=null;
+function openQrAccess(){qrPreviousFocus=document.activeElement;qrModal.classList.add('open');qrModal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';qrClose.focus()}
+function closeQrAccess(){qrModal.classList.remove('open');qrModal.setAttribute('aria-hidden','true');document.body.style.overflow='';if(qrPreviousFocus&&qrPreviousFocus.focus)qrPreviousFocus.focus()}
+async function copyPublicAppUrl(){
+  try{
+    if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(PUBLIC_APP_URL);
+    else{const t=document.createElement('textarea');t.value=PUBLIC_APP_URL;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw new Error('copy_failed');t.remove()}
+    toast('앱 주소를 복사했어요 📋');
+  }catch(e){toast('복사하지 못했어요. 주소를 길게 눌러 복사해 주세요.',3400)}
+}
+qrButton.onclick=openQrAccess;qrClose.onclick=closeQrAccess;$('#qrCopy').onclick=copyPublicAppUrl;
+qrModal.onclick=e=>{if(e.target===qrModal)closeQrAccess()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&qrModal.classList.contains('open'))closeQrAccess()});
+/* QR_ACCESS_V1_6_END */
 
 /* ============ PWA 설치 ============ */
 let deferredPrompt=null;
