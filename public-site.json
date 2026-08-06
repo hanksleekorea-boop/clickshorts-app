@@ -1,0 +1,18 @@
+{
+  "version": "v2.1",
+  "publicUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/",
+  "pcUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/pc.html",
+  "landingUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/landing.html",
+  "progressUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/progress.html",
+  "sourceVisibility": "private",
+  "contents": [
+    ".nojekyll",
+    "clickshorts-app-v2.1-qr.png",
+    "clickshorts-current-qr.png",
+    "index-v2.1.html",
+    "index.html",
+    "landing.html",
+    "pc.html",
+    "progress.html"
+  ]
+}
