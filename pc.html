@@ -2024,7 +2024,7 @@ document.querySelectorAll('.new-project,[data-service-view="v-make"]').forEach(b
     currentStage=Math.max(1,Math.min(4,Number(stage)||1));
     document.querySelectorAll('[data-p0-stage]').forEach(button=>{const n=Number(button.dataset.p0Stage);button.classList.toggle('on',n===currentStage);button.classList.toggle('done',n<currentStage)});
   }
-  function saveNow(){const data=collect();if(!hasContent(data))return;writeDraft(data);setStatus();updateRestore(data)}
+  function saveNow(){const data=collect();if(!hasContent(data))return;writeDraft(data);setStatus()}
   function scheduleSave(){clearTimeout(saveTimer);setStatus('저장 중…');saveTimer=setTimeout(saveNow,280)}
   function updateRestore(data){
     if(!hasContent(data)){restore.hidden=true;return}
@@ -2035,7 +2035,7 @@ document.querySelectorAll('.new-project,[data-service-view="v-make"]').forEach(b
   }
   function applyDraft(data){
     ['homeUrl','lfUrl','lfText','topic','script'].forEach(id=>{document.getElementById(id).value=data[id]||''});
-    setStage(data.stage||1);refreshLf();refreshMeta();refreshGen();setStatus('저장한 작업을 다시 열었습니다');
+    setStage(data.stage||1);refreshLf();refreshMeta();refreshGen();restore.hidden=true;setStatus('저장한 작업을 다시 열었습니다');
     document.getElementById(currentStage>=3?'script':'longformSect').scrollIntoView({behavior:'smooth',block:'center'});
   }
   function clearInputs(){fields.forEach(field=>{field.value=''});lfResults.innerHTML='';refreshLf();refreshMeta();refreshGen();setStage(1)}
