@@ -8,16 +8,31 @@
   "landingUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/landing.html",
   "progressUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/progress.html",
   "sourceVisibility": "private",
+  "advertising": {
+    "provider": "Google AdSense",
+    "publisherId": "ca-pub-2476023536699107",
+    "codeReadiness": "ready",
+    "siteStatus": "getting-ready",
+    "paymentFeatureIncluded": false
+  },
   "contents": [
     ".nojekyll",
+    "ads.txt",
+    "adsense-readiness.json",
+    "advertising.html",
     "app.html",
     "clickshorts-app-v2.1-qr.png",
     "clickshorts-current-qr.png",
+    "guides.html",
     "index-v2.1.html",
     "index.html",
     "landing.html",
     "mobile.html",
     "pc.html",
-    "progress.html"
+    "privacy.html",
+    "progress.html",
+    "robots.txt",
+    "sitemap.xml",
+    "terms.html"
   ]
 }

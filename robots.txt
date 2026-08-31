@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /clickshorts-app/
+Sitemap: https://hanksleekorea-boop.github.io/clickshorts-app/sitemap.xml

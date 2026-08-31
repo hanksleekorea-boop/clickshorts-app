@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "publisherId": "ca-pub-2476023536699107",
+  "siteDomain": "hanksleekorea-boop.github.io",
+  "pathPrefix": "/clickshorts-app/",
+  "rootAdsTxtUrl": "https://hanksleekorea-boop.github.io/ads.txt",
+  "runtimeEnabled": true,
+  "siteStatus": "getting-ready",
+  "account": {
+    "autoAdsEnabled": true,
+    "autoOptimizationEnabled": true,
+    "europeanRegulationsMessageActive": true,
+    "usStateRegulationsMessageActive": true,
+    "policyCenterViolations": 0,
+    "verifiedAt": "2026-08-31"
+  },
+  "manualUnits": {
+    "homeResponsive": {
+      "slotId": "2605987155",
+      "format": "auto",
+      "fullWidthResponsive": true
+    },
+    "landingMultiplex": {
+      "slotId": "3173902712",
+      "format": "autorelaxed",
+      "layoutKey": "-gw-3+1f-3d+2z"
+    }
+  },
+  "excludedSurfaces": [
+    "privacy.html",
+    "advertising.html",
+    "progress.html",
+    "account-dialog",
+    "editor-controls",
+    "download-controls"
+  ],
+  "codeReadiness": "ready",
+  "actualAdServing": "waiting-google-site-approval",
+  "rootAdsTxtVerifiedHttp200": true,
+  "privacyAndMessaging": "active",
+  "manualUnitProvenance": "same-publisher-existing-units; replace with ClickShorts-dedicated units when UI access is available"
+}

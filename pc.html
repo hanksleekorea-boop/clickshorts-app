@@ -336,6 +336,22 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 /* P0_CONTINUITY_V2_1_STYLE_END */
 
 </style>
+<meta name="google-adsense-account" content="ca-pub-2476023536699107">
+<script type="application/json" id="clickshorts-adsense-config">{"schemaVersion":1,"publisherId":"ca-pub-2476023536699107","siteDomain":"hanksleekorea-boop.github.io","pathPrefix":"/clickshorts-app/","rootAdsTxtUrl":"https://hanksleekorea-boop.github.io/ads.txt","runtimeEnabled":true,"siteStatus":"getting-ready","account":{"autoAdsEnabled":true,"autoOptimizationEnabled":true,"europeanRegulationsMessageActive":true,"usStateRegulationsMessageActive":true,"policyCenterViolations":0,"verifiedAt":"2026-08-31"},"manualUnits":{"homeResponsive":{"slotId":"2605987155","format":"auto","fullWidthResponsive":true},"landingMultiplex":{"slotId":"3173902712","format":"autorelaxed","layoutKey":"-gw-3+1f-3d+2z"}},"excludedSurfaces":["privacy.html","advertising.html","progress.html","account-dialog","editor-controls","download-controls"]}</script>
+<script id="clickshorts-adsense-loader">(()=>{const ok=location.protocol==='https:'&&location.hostname==="hanksleekorea-boop.github.io"&&location.pathname.startsWith("/clickshorts-app/");if(!ok)return;const s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2476023536699107';s.dataset.adClient='clickshorts';document.head.appendChild(s)})()</script>
+<style>
+/* CLICKSHORTS_ADSENSE_V1_STYLES_START */
+.cs-ad-shell{grid-column:1/-1;width:100%;margin:28px 0;padding:14px 12px 12px;border:1px solid #e2e7e4;border-radius:14px;background:#fff;color:#68736c;overflow:hidden;contain:layout paint}
+.cs-ad-shell[hidden]{display:none!important}.cs-ad-label{display:block;margin:0 0 9px;text-align:center;font-size:10px;font-weight:800;letter-spacing:.12em;color:#8a938e}
+.cs-ad-shell .adsbygoogle{display:block;min-width:250px;min-height:120px;text-align:center}.cs-ad-display{min-height:158px}.cs-ad-multiplex{max-width:1120px;min-height:280px;margin:34px auto}
+.cs-ad-policy-footer{display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;padding:22px 18px 104px;color:#747e78;font-size:11px;line-height:1.6;text-align:center}
+.cs-ad-policy-footer a,.cs-ad-policy-footer button{border:0;background:none;color:#087f48;font:800 11px inherit;text-decoration:underline;cursor:pointer;padding:5px}
+.cs-ad-policy-footer span{color:#bcc2be}.cs-ad-state{font-size:10px;color:#8a938e}
+@media(max-width:620px){.cs-ad-shell{margin:22px 0;padding:11px 8px}.cs-ad-shell .adsbygoogle{min-height:100px}.cs-ad-display{min-height:136px}.cs-ad-multiplex{min-height:220px}.cs-ad-policy-footer{padding-bottom:110px}}
+@media print{.cs-ad-shell,.cs-ad-policy-footer{display:none!important}}
+/* CLICKSHORTS_ADSENSE_V1_STYLES_END */
+
+</style>
 </head>
 <body>
 <div id="app">
@@ -377,6 +393,12 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
     </div>
   </section>
   <!-- P0_INPUT_PROMISE_V2_0_END -->
+<!-- CLICKSHORTS_ADSENSE_HOME_DISPLAY_START -->
+<aside class="cs-ad-shell cs-ad-display" data-cs-ad-placement="home-responsive" aria-label="광고" hidden>
+  <span class="cs-ad-label">광고</span>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2476023536699107" data-ad-slot="2605987155" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</aside>
+<!-- CLICKSHORTS_ADSENSE_HOME_DISPLAY_END -->
   <div class="quota">
     <div class="qbar"><i id="qFill"></i></div>
     <div class="qn" id="qTxt">오늘 <b>0</b>/10편</div>
@@ -1998,27 +2020,72 @@ document.querySelectorAll('.new-project,[data-service-view="v-make"]').forEach(b
   },true);
 })();
 /* P0_INPUT_PROMISE_V2_0_RUNTIME_END */
+/* 기존 ClickShorts 사용자의 이 기기 저장값을 새 화면에서도 안전하게 읽는다.
+   원래 v1 초안은 삭제하거나 덮어쓰지 않고, v2 사본만 새 후보가 사용한다. */
+(function(root){
+  const LEGACY_DRAFT='cs_input_draft_v1';
+  const CURRENT_DRAFT='cs_input_draft_v2';
+  const RECOVERY_DRAFT='cs_input_draft_v2_recovery_v1';
+  const text=value=>typeof value==='string'?value:(value==null?'':String(value));
+  const record=value=>value&&typeof value==='object'&&!Array.isArray(value);
+  const parse=value=>{try{return JSON.parse(value)}catch(_){return null}};
+  const stage=value=>Math.max(1,Math.min(4,Number(value)||1));
+
+  function normalizeDraft(value, now){
+    if(!record(value))return null;
+    const draft={schemaVersion:2,version:2,updatedAt:typeof value.updatedAt==='string'?value.updatedAt:new Date(now).toISOString(),
+      stage:stage(value.stage),homeUrl:text(value.homeUrl||value.url),lfUrl:text(value.lfUrl||value.sourceUrl),
+      lfText:text(value.lfText||value.text),topic:text(value.topic||value.title),script:text(value.script||value.caption)};
+    if(![draft.homeUrl,draft.lfUrl,draft.lfText,draft.topic,draft.script].some(Boolean))return null;
+    return draft;
+  }
+
+  function writeChecked(storage,key,value){
+    const raw=JSON.stringify(value);storage.setItem(key,raw);return storage.getItem(key)===raw;
+  }
+
+  function migrateStorage(storage,now=Date.now()){
+    const result={draft:null,source:'none',migrated:false,recovered:false};
+    if(!storage||typeof storage.getItem!=='function')return result;
+    let currentRaw=null;
+    try{currentRaw=storage.getItem(CURRENT_DRAFT)}catch(_){return result}
+    const current=normalizeDraft(parse(currentRaw),now);
+    if(current){result.draft=current;result.source='v2';return result}
+    let legacyRaw=null;try{legacyRaw=storage.getItem(LEGACY_DRAFT)}catch(_){return result}
+    const legacy=normalizeDraft(parse(legacyRaw),now);
+    if(!legacy)return result;
+    legacy.migratedFrom=LEGACY_DRAFT;legacy.migratedAt=new Date(now).toISOString();
+    try{
+      if(currentRaw&&storage.getItem(RECOVERY_DRAFT)===null){storage.setItem(RECOVERY_DRAFT,currentRaw);result.recovered=true}
+      if(!currentRaw)result.migrated=writeChecked(storage,CURRENT_DRAFT,legacy);
+    }catch(_){/* 저장을 못 써도 원래 v1 초안은 메모리에서 계속 사용한다. */}
+    result.draft=legacy;result.source='v1';return result;
+  }
+
+  root.ClickShortsClientCompat={LEGACY_DRAFT,CURRENT_DRAFT,RECOVERY_DRAFT,normalizeDraft,migrateStorage};
+})(typeof window!=='undefined'?window:globalThis);
+
 
 /* P0_CONTINUITY_V2_1_RUNTIME_START */
 (()=>{
-  const KEY='cs_input_draft_v1';
+  const KEY='cs_input_draft_v1',COMPAT_KEY='cs_input_draft_v2';
   let memoryDraft=null,storageMode='persistent',saveTimer=null,currentStage=1;
   const fields=['homeUrl','lfUrl','lfText','topic','script'].map(id=>document.getElementById(id));
   const restore=document.getElementById('p0Restore'),status=document.getElementById('p0SaveStatus');
   function hasContent(data){return !!(data&&(data.homeUrl||data.lfUrl||data.lfText||data.topic||data.script))}
   function readDraft(){
-    try{const raw=localStorage.getItem(KEY);if(!raw)return memoryDraft;const value=JSON.parse(raw);storageMode='persistent';return value}
+    try{const raw=localStorage.getItem(COMPAT_KEY)||localStorage.getItem(KEY);if(!raw)return memoryDraft;const value=JSON.parse(raw);storageMode='persistent';return value}
     catch(_){storageMode='memory';return memoryDraft}
   }
   function writeDraft(data){
     memoryDraft=data;
-    try{const raw=JSON.stringify(data);localStorage.setItem(KEY,raw);if(localStorage.getItem(KEY)!==raw)throw new Error('readback');storageMode='persistent';return true}
+    try{const raw=JSON.stringify(data);localStorage.setItem(COMPAT_KEY,raw);if(localStorage.getItem(COMPAT_KEY)!==raw)throw new Error('readback');storageMode='persistent';return true}
     catch(_){storageMode='memory';return false}
   }
   function removeDraft(){
-    memoryDraft=null;try{localStorage.removeItem(KEY);storageMode='persistent'}catch(_){storageMode='memory'}
+    memoryDraft=null;try{localStorage.removeItem(COMPAT_KEY);localStorage.removeItem(KEY);storageMode='persistent'}catch(_){storageMode='memory'}
   }
-  function collect(){return {version:1,updatedAt:new Date().toISOString(),stage:currentStage,homeUrl:fields[0].value.trim(),lfUrl:fields[1].value.trim(),lfText:fields[2].value,topic:fields[3].value,script:fields[4].value}}
+  function collect(){return {schemaVersion:2,version:2,updatedAt:new Date().toISOString(),stage:currentStage,homeUrl:fields[0].value.trim(),lfUrl:fields[1].value.trim(),lfText:fields[2].value,topic:fields[3].value,script:fields[4].value}}
   function setStatus(message){status.textContent=message||(storageMode==='persistent'?'이 기기에 자동 저장됨':'브라우저 저장을 쓸 수 없어 이 화면에서만 보관')}
   function setStage(stage){
     currentStage=Math.max(1,Math.min(4,Number(stage)||1));
@@ -2030,7 +2097,7 @@ document.querySelectorAll('.new-project,[data-service-view="v-make"]').forEach(b
     if(!hasContent(data)){restore.hidden=true;return}
     restore.hidden=false;
     const size=(data.lfText||'').length+(data.script||'').length;
-    document.getElementById('p0RestoreSummary').textContent=`원문·대본 ${size.toLocaleString('ko-KR')}자 · ${Math.max(1,Number(data.stage)||1)}단계에서 이어갈 수 있어요.`;
+    document.getElementById('p0RestoreSummary').textContent=`원문·대본 ${size.toLocaleString('ko-KR')}자 · ${Math.max(1,Number(data.stage)||1)}단계에서 이어갈 수 있어요.${data.migratedFrom?' 기존 저장 작업을 새 화면용 사본으로 보호해 가져왔습니다.':''}`;
     const when=new Date(data.updatedAt);document.getElementById('p0RestoreTime').textContent=isNaN(when.getTime())?'저장 시간 확인 불가':`마지막 저장 ${when.toLocaleString('ko-KR')}`;
   }
   function applyDraft(data){
@@ -2053,7 +2120,8 @@ document.querySelectorAll('.new-project,[data-service-view="v-make"]').forEach(b
   document.querySelectorAll('[data-p0-target]').forEach(button=>button.addEventListener('click',()=>{const target=document.getElementById(button.dataset.p0Target);if(target){switchView(button.dataset.p0Target==='v-play'?'v-play':'v-make');target.scrollIntoView({behavior:'smooth',block:'center'})}}));
   const continuitySwitchBase=switchView;switchView=function(id){saveNow();continuitySwitchBase(id)};
   window.addEventListener('pagehide',saveNow);document.addEventListener('visibilitychange',()=>{if(document.hidden)saveNow()});
-  const saved=readDraft();if(saved){updateRestore(saved);setStatus('저장한 작업이 있습니다 · 이어서 하기를 눌러 주세요')}else setStatus('입력을 시작하면 이 기기에 자동 저장됩니다');
+  const compatibility=window.ClickShortsClientCompat&&window.ClickShortsClientCompat.migrateStorage?window.ClickShortsClientCompat.migrateStorage(localStorage):null;
+  const saved=compatibility&&compatibility.draft?compatibility.draft:readDraft();if(saved){updateRestore(saved);setStatus(compatibility&&compatibility.source==='v1'?'기존 저장 작업을 보호해 새 화면에서 열 수 있습니다 · 이어서 하기를 눌러 주세요':'저장한 작업이 있습니다 · 이어서 하기를 눌러 주세요')}else setStatus('입력을 시작하면 이 기기에 자동 저장됩니다');
 })();
 /* P0_CONTINUITY_V2_1_RUNTIME_END */
 
@@ -2118,6 +2186,50 @@ if(!store('cs_onb')){$('#onb').style.display='flex';showOnb(0)}
 /* 음성 목록 프리로드 */
 try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
 refreshMeta();
+</script>
+<!-- CLICKSHORTS_ADSENSE_POLICY_FOOTER_START -->
+<footer class="cs-ad-policy-footer" aria-label="광고 및 개인정보 안내">
+  <a href="guides.html">제작 가이드</a><span>·</span><a href="privacy.html">개인정보처리방침</a><span>·</span><a href="advertising.html">광고 안내</a><span>·</span><a href="terms.html">이용약관</a><span>·</span>
+  <button type="button" data-cs-privacy-settings>개인정보 및 쿠키 설정</button><span>·</span>
+  <small class="cs-ad-state" data-cs-ad-state>광고 상태 확인 중</small>
+</footer>
+<!-- CLICKSHORTS_ADSENSE_POLICY_FOOTER_END -->
+
+<script>
+/* CLICKSHORTS_ADSENSE_V1_RUNTIME_START */
+(()=>{
+  'use strict';
+  const node=document.getElementById('clickshorts-adsense-config');
+  let config={};
+  try{config=JSON.parse(node?.textContent||'{}')}catch(_){config={}}
+  const stateNodes=[...document.querySelectorAll('[data-cs-ad-state]')];
+  const setState=value=>{document.documentElement.dataset.clickshortsAds=value;stateNodes.forEach(el=>{el.textContent=value==='active'?'광고 사용 중':value==='waiting-google'?'Google 사이트 승인 대기 중':'광고 요청 없음'})};
+  const production=location.protocol==='https:'&&location.hostname===config.siteDomain&&location.pathname.startsWith(config.pathPrefix||'/');
+  const publisherOk=/^ca-pub-\d{16}$/.test(config.publisherId||'');
+  const eligible=config.runtimeEnabled===true&&production&&publisherOk;
+  const shells=[...document.querySelectorAll('.cs-ad-shell[data-cs-ad-placement]')];
+  if(!eligible){shells.forEach(el=>el.hidden=true);setState('blocked-non-production');return}
+  shells.forEach(el=>el.hidden=false);
+  const mount=()=>{
+    for(const shell of shells){
+      const unit=shell.querySelector('.adsbygoogle');
+      if(!unit||unit.dataset.csMounted==='1')continue;
+      unit.dataset.csMounted='1';
+      try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(_){unit.dataset.csMounted='error'}
+    }
+    setState(config.siteStatus==='ready'?'active':'waiting-google');
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  document.querySelectorAll('[data-cs-privacy-settings]').forEach(button=>button.addEventListener('click',()=>{
+    if(window.googlefc&&Array.isArray(window.googlefc.callbackQueue)&&typeof window.googlefc.showRevocationMessage==='function'){
+      window.googlefc.callbackQueue.push(window.googlefc.showRevocationMessage);
+    }else{
+      location.href='privacy.html#advertising-and-cookies';
+    }
+  }));
+})();
+/* CLICKSHORTS_ADSENSE_V1_RUNTIME_END */
+
 </script>
 </body>
 </html>
