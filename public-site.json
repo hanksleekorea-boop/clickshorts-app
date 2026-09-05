@@ -1,13 +1,41 @@
 {
-  "version": "v2.1",
+  "version": "v4.0",
+  "releaseId": "v4.0-33088f25703e",
   "publicUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/",
   "pcUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/pc.html",
   "mobileWebUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/mobile.html",
   "mobileAppUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/app.html",
-  "mobileAppType": "installable-web-app",
   "landingUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/landing.html",
   "progressUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/progress.html",
+  "manifestUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/manifest.webmanifest",
+  "serviceWorkerUrl": "https://hanksleekorea-boop.github.io/clickshorts-app/service-worker.js",
   "sourceVisibility": "private",
+  "releaseState": "implementation-and-deploy-package-ready-public-hold-auth-backend-and-google-site-approval",
+  "authBackend": "not-configured",
+  "automaticCloudBackup": false,
+  "internalDevelopment": {
+    "stage1": "complete",
+    "stage2": "complete",
+    "stage3": "complete"
+  },
+  "contentQuality": {
+    "stage1": "automated-structural-checks-only",
+    "stage2": "quantity-complete-editorial-review-pending",
+    "stage3": "quantity-complete-editorial-review-pending",
+    "bodyLocales": [
+      "ko"
+    ]
+  },
+  "externalGates": [
+    "auth-delivery",
+    "real-transcription",
+    "public-render",
+    "android-iphone",
+    "external-review",
+    "google-site-approval"
+  ],
+  "publicScopeChange": true,
+  "newPaidResource": false,
   "advertising": {
     "provider": "Google AdSense",
     "publisherId": "ca-pub-2476023536699107",
@@ -21,18 +49,24 @@
     "adsense-readiness.json",
     "advertising.html",
     "app.html",
-    "clickshorts-app-v2.1-qr.png",
+    "clickshorts-app-v4.0-qr.png",
     "clickshorts-current-qr.png",
     "guides.html",
-    "index-v2.1.html",
+    "help.html",
+    "icon192.png",
+    "icon512.png",
+    "index-v4.0.html",
     "index.html",
     "landing.html",
+    "manifest.webmanifest",
     "mobile.html",
     "pc.html",
     "privacy.html",
     "progress.html",
     "robots.txt",
+    "service-worker.js",
     "sitemap.xml",
+    "stage12-content.json",
     "terms.html"
   ]
 }
