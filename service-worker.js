@@ -1,6 +1,6 @@
-/* ClickShorts owned cache only · v4.0-a968d597f6c3 */
+/* ClickShorts owned cache only · v4.0-72324fd6816c */
 const APP_PREFIX = 'clickshorts-app-';
-const CACHE_NAME = APP_PREFIX + "v4.0-a968d597f6c3";
+const CACHE_NAME = APP_PREFIX + "v4.0-72324fd6816c";
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon192.png", "./icon512.png", "./clickshorts-current-qr.png", "./privacy.html", "./advertising.html", "./help.html", "./adsense-readiness.json", "./robots.txt", "./sitemap.xml", "./guides.html", "./terms.html", "./stage12-content.json"];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));

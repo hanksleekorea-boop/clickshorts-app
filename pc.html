@@ -385,9 +385,11 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 @media(max-width:720px){.cs-stage12-backdrop{padding:0}.cs-stage12-dialog{min-height:100%;border-radius:0;padding:15px}.cs-stage12-stages,.cs-stage12-rubric,.cs-stage12-results{grid-template-columns:1fr}.cs-stage12-dialog h2{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.cs-stage12-backdrop *{scroll-behavior:auto!important;transition:none!important}}
 
+/* V5_TRUTHFUL_MOBILE_GUARD */
+#onb{overflow:auto;padding:24px;overscroll-behavior:contain}#onb .obtns{width:min(100%,320px);max-width:100%;margin-inline:auto}#onb .obtns button{min-width:0}
 </style>
 <link rel="canonical" href="https://hanksleekorea-boop.github.io/clickshorts-app/">
-<meta name="clickshorts-release" content="v4.0-a968d597f6c3">
+<meta name="clickshorts-release" content="v4.0-72324fd6816c">
 <meta name="description" content="클릭쇼츠 · Google 로그인 준비, 내 계정, 수동 백업, 안전한 설치형 웹앱">
 <meta name="google-adsense-account" content="ca-pub-2476023536699107">
 <script type="application/json" id="clickshorts-adsense-config">{"schemaVersion":1,"publisherId":"ca-pub-2476023536699107","siteDomain":"hanksleekorea-boop.github.io","pathPrefix":"/clickshorts-app/","rootAdsTxtUrl":"https://hanksleekorea-boop.github.io/ads.txt","runtimeEnabled":true,"siteStatus":"getting-ready","account":{"autoAdsEnabled":true,"autoOptimizationEnabled":true,"europeanRegulationsMessageActive":true,"usStateRegulationsMessageActive":true,"policyCenterViolations":0,"verifiedAt":"2026-08-31"},"manualUnits":{"homeResponsive":{"slotId":"2605987155","format":"auto","fullWidthResponsive":true},"landingMultiplex":{"slotId":"3173902712","format":"autorelaxed","layoutKey":"-gw-3+1f-3d+2z"}},"excludedSurfaces":["privacy.html","advertising.html","progress.html","account-dialog","editor-controls","download-controls"]}</script>
@@ -406,19 +408,19 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 
 </style>
 </head>
-<body data-clickshorts-release="v4.0-a968d597f6c3">
+<body data-clickshorts-release="v4.0-72324fd6816c">
 <div id="app">
 <header>
   <a class="brand-v19" href="#" aria-label="클릭쇼츠 홈"><span class="brand-symbol">C</span><span>클릭쇼츠</span><em>Shorts Studio</em></a>
   <div class="service-nav" aria-label="주요 메뉴"><button class="on" data-service-view="v-make">홈</button><button data-service-view="v-series">연속 제작</button><button data-service-view="v-lib">내 프로젝트</button><button data-service-view="v-price">이용 안내</button></div>
-  <div class="header-actions"><span class="service-usage"><i></i><b>무료 플랜</b><span>오늘 10편</span></span><!-- CLICKSHORTS_ACCOUNT_V4_START -->
+  <div class="header-actions"><span class="service-usage"><i></i><b>무료 플랜</b><span>무료 체험 · 실행 전 안내</span></span><!-- CLICKSHORTS_ACCOUNT_V4_START -->
 <div class="cs-auth-entry" id="csAuthEntry" data-auth-state="checking">
   <button type="button" id="csAuthButton" aria-describedby="csAuthStatus" disabled>Google로 로그인·무료 가입</button>
   <span id="csAuthStatus" role="status" aria-live="polite">로그인 상태 확인 중…</span>
 </div>
 <!-- CLICKSHORTS_FREE_CONTENT_V1_START -->
-<button type="button" class="cs-free-entry" id="csFreeContentOpen">무료 예시 48개</button><a href="./content-hub.html" class="cs-free-entry" aria-label="전체 콘텐츠 허브 열기">전체 콘텐츠 1,596개</a>
-<button class="cs-stage12-entry" id="csStage12Open" type="button" aria-haspopup="dialog">1·2단계 작업실</button>
+<button type="button" class="cs-free-entry" id="csFreeContentOpen">검수 완료 예시 48개</button><a href="./content-hub.html" class="cs-free-entry" aria-label="전체 콘텐츠 허브 열기">검수된 콘텐츠 324개</a>
+<button class="cs-stage12-entry" id="csStage12Open" type="button" aria-haspopup="dialog">콘텐츠·도움말</button>
 <button class="icon-button" id="qrBtn" type="button" aria-label="앱 QR 코드 보기">⌗</button><button id="installBtn">앱 설치</button><button class="new-project" type="button" data-service-view="v-make">＋ 새 프로젝트</button></div>
 </header>
 <main>
@@ -462,7 +464,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 <!-- CLICKSHORTS_ADSENSE_HOME_DISPLAY_END -->
   <div class="quota">
     <div class="qbar"><i id="qFill"></i></div>
-    <div class="qn" id="qTxt">오늘 <b>0</b>/10편</div>
+    <div class="qn" id="qTxt">무료 체험 · 실행 전 안내</div>
   </div>
 
 
@@ -529,15 +531,15 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
   <div class="sect">
     <h2><span class="stepnum">3</span>대본 다듬기<small>한 줄이 영상의 한 장면이 됩니다</small></h2>
     <div class="topicrow">
-      <input id="topic" placeholder="주제만 입력해도 돼요 (예: 에어팟, 다이어트, 제주 여행)">
-      <button class="chip" id="aiBtn">🤖 AI 초안</button>
+      <input id="topic" placeholder="주제나 핵심 문장을 입력하세요 (예: 에어팟 사용 후기)">
+      <button class="chip" id="aiBtn" aria-describedby="draftModeNote">문장 틀로 초안 만들기</button>
     </div>
     <div class="topicrow" id="shopRow">
       <input id="prodUrl" placeholder="🛒 상품 링크 붙여넣기 (쿠팡·네이버·알리 등)">
       <button class="chip" id="urlBtn">불러오기</button>
     </div>
     <div id="prodCard" class="prodcard"></div>
-    <textarea id="script" placeholder="대본을 붙여넣거나 직접 쓰세요.&#10;줄을 바꾸면 장면이 나뉩니다.&#10;&#10;주제 입력 → 'AI 초안' 또는 '예시 대본'으로 바로 체험!"></textarea>
+    <textarea id="script" placeholder="대본을 붙여넣거나 직접 쓰세요.&#10;줄을 바꾸면 장면이 나뉩니다.&#10;&#10;주제 입력 → '문장 틀로 초안 만들기' 또는 '예시 대본'으로 체험!"></textarea>
     <div class="srow">
       <button class="chip" id="exBtn">✨ 예시 대본 넣기</button>
       <div class="meta" id="scriptMeta">0자 · 예상 0초</div>
@@ -546,7 +548,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
   <div class="sect">
     <h2><span class="stepnum">4</span>만들기 설정<small>추천값 그대로 시작해도 됩니다</small></h2>
     <div class="engines">
-      <div class="eng sel" data-eng="basic"><div class="ei">🧩</div><div class="et"><div class="en">기본 조립 <span class="badge b-free">FREE</span></div><div class="ed">템플릿 모션그래픽 + AI 나레이션 + 자동 자막 · 생성 10초</div></div></div>
+      <div class="eng sel" data-eng="basic"><div class="ei">🧩</div><div class="et"><div class="en">기본 조립 <span class="badge b-free">FREE</span></div><div class="ed">템플릿 모션그래픽 + 브라우저 음성 미리듣기 · 로컬 프리뷰</div></div></div>
       <div class="eng" data-eng="hybrid"><div class="ei">🎨</div><div class="et"><div class="en">하이브리드 <span class="badge b-plus">PLUS</span></div><div class="ed">장면별 AI 이미지 배경 추가 · 생성 40초</div></div></div>
       <div class="eng" data-eng="ai"><div class="ei">🎬</div><div class="et"><div class="en">AI 시네마틱 <span class="badge b-pro">PRO</span></div><div class="ed">Seedance급 AI 영상 장면 삽입 · 생성 2~3분</div></div></div>
     </div>
@@ -565,7 +567,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
       </select>
     </div>
     <label class="hookrow"><input type="checkbox" id="hookChk" checked><span>🎯 훅 프레임 자동 추가 <em>첫 1초에 시선을 잡는 대형 문구</em></span></label>
-    <button id="genBtn" disabled>▶ 쇼츠 자동 생성</button>
+    <button id="genBtn" disabled>▶ 쇼츠 프리뷰 만들기</button>
     <div class="note">현재 브라우저에서는 기본 영상과 안전한 대체 배경으로 완성합니다. 실제 이미지·영상 생성이 준비되지 않은 경우에도 작업을 멈추지 않고 결과에 이유를 표시합니다.</div>
   </div>
 </section>
@@ -622,9 +624,9 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 
 <section class="view" id="v-jobs" data-p0-items="9-15">
   <!-- P0_JOB_CONTROL_V2_2_START -->
-  <div class="jobs-hero"><div><span class="eyebrow">P0 9~15 · 실제 서버 연결</span><h2>내 작업</h2><p>진행 중·완료·실패 작업을 한곳에서 보고, 대기 작업만 안전하게 취소합니다.</p></div><button class="pbtn main" id="jobRefresh" type="button">새로 확인</button></div>
+  <div class="jobs-hero"><div><span class="eyebrow">P0 9~15 · 공개 작업 서버 연결 후 제공</span><h2>내 작업</h2><p>진행 중·완료·실패 작업을 한곳에서 보고, 대기 작업만 안전하게 취소합니다.</p></div><button class="pbtn main" id="jobRefresh" type="button">새로 확인</button></div>
   <div class="job-connect">
-    <label>작업 서버 주소 <input id="jobApiUrl" inputmode="url" placeholder="예: https://api.example.com"></label>
+    <label>작업 서버 연결(준비 중) <input id="jobApiUrl" inputmode="url" placeholder="공개 작업 서버 연결 후 사용" disabled></label>
     <button id="jobConnect" type="button">연결 확인</button>
     <span id="jobConnection" role="status" aria-live="polite">서버를 연결하면 실제 작업만 표시합니다 · 가짜 작업 없음</span>
   </div>
@@ -634,7 +636,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
     <button id="jobNotify" type="button">알림 켜기</button>
   </div>
   <div class="job-privacy">입력은 먼저 이 기기에 보관됩니다. 서버 연결 뒤 작업을 보낼 때만 대본이 작업 서버로 전송되며 외부 게시 서비스로는 보내지 않습니다.<br>실패하면 원문 입력으로 돌아가기 · 대본 줄이기 · 나중에 이어 하기를 바로 고를 수 있습니다.</div>
-  <div id="jobList" aria-live="polite"><div class="job-empty">연결된 작업 서버가 없습니다.<br>주소를 저장하면 실제 내 작업을 불러옵니다.</div></div>
+  <div id="jobList" aria-live="polite"><div class="job-empty">연결된 작업 서버가 없습니다.<br>주소를 저장하면 연결된 작업 서버가 준비되면 내 작업을 불러옵니다.</div></div>
   <!-- P0_JOB_CONTROL_V2_2_END -->
 </section>
 
@@ -663,18 +665,18 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
   <div class="service-view-head"><div><h1>나에게 맞는 요금제</h1><p>필요한 제작량과 영상 품질에 맞춰 선택하세요.</p></div><span class="service-view-badge">후보 체험용 전환</span></div>
   <div class="plan" data-plan="free">
     <div class="pn">Free</div><div class="pp">₩0<small> /월</small></div>
-    <ul><li>하루 10편 생성</li><li>기본 조립 엔진 · 표준 보이스 4종</li><li>720p · 워터마크 포함</li><li>예약 업로드(유튜브·틱톡) 기본 제공</li></ul>
+    <ul><li>로컬 프리뷰 · 실제 과금 없음</li><li>기본 조립 · 브라우저 음성 미리듣기</li><li>720p 파일은 서버 연결 후 제공</li><li>외부 발행은 연결 전</li></ul>
     <button class="pbtn2">현재 이용 중</button>
   </div>
   <div class="plan hot" data-plan="plus">
-    <div class="pn">Plus ⭐</div><div class="pp">₩9,900<small> /월</small></div>
-    <ul><li>무제한 생성 · 워터마크 제거</li><li>하이브리드 엔진(AI 이미지 배경)</li><li>1080p · 프리미엄 보이스 20종</li><li>예약 업로드 + 채널 성과 리포트</li></ul>
-    <button class="pbtn2">Plus 시작하기</button>
+    <div class="pn">Plus (준비 중)</div><div class="pp">₩9,900<small> /월</small></div>
+    <ul><li>유료 기능 · 결제 연결 후 제공</li><li>하이브리드 엔진 · 결제 연결 후 제공</li><li>1080p · 프리미엄 음성 · 결제 연결 후 제공</li><li>예약 발행·성과 리포트 · 연결 전</li></ul>
+    <button class="pbtn2" disabled aria-disabled="true">결제 연결 후 제공</button>
   </div>
   <div class="plan" data-plan="pro">
-    <div class="pn">Pro</div><div class="pp">₩29,000<small> /월</small></div>
-    <ul><li>AI 시네마틱 엔진(생성형 영상 장면)</li><li>보이스 클로닝 1종</li><li>채널 시리즈 자동화(주제→대본→발행)</li><li>팀 시트 2인 · 우선 렌더링</li></ul>
-    <button class="pbtn2">Pro 시작하기</button>
+    <div class="pn">Pro (준비 중)</div><div class="pp">₩29,000<small> /월</small></div>
+    <ul><li>AI 시네마틱 · 결제 연결 후 제공</li><li>보이스 클로닝 · 결제 연결 후 제공</li><li>채널 자동화 · 연결 전</li><li>팀·우선 렌더링 · 연결 전</li></ul>
+    <button class="pbtn2" disabled aria-disabled="true">결제 연결 후 제공</button>
   </div>
   <div class="privacy-card" id="privacySettings">
     <h3>🔒 개인정보·분석 설정</h3>
@@ -818,7 +820,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
           <h4>근거 후보 3개 비교</h4><div class="cs-free-candidates" id="csFreeCandidates"></div>
           <div class="cs-free-quality" id="csFreeQuality"></div>
           <button type="button" class="cs-free-primary" id="csFreeUseExample">이 예시를 기존 만들기에 넣기</button>
-          <p class="cs-free-honesty">예시는 한도를 차감하지 않습니다. 실제 영상·음성 전사와 720p 파일은 공개 작업 서버가 연결된 뒤에만 처리됩니다.</p>
+        <p class="cs-free-honesty">예시는 한도를 차감하지 않습니다. 현재는 권리 안전한 텍스트·로컬 프리뷰만 제공하며, 실제 영상·음성 전사와 720p 파일은 공개 작업 서버가 연결된 뒤에만 처리됩니다.</p>
         </section>
       </main>
     </div>
@@ -828,7 +830,7 @@ body>#app>nav{background:rgba(255,255,255,.97)!important;border-top-color:#e2e6e
 
 <div class="cs-stage12-backdrop" id="csStage12Backdrop" hidden>
   <section class="cs-stage12-dialog" role="dialog" aria-modal="true" aria-labelledby="csStage12Title" tabindex="-1">
-    <header><div><span>결제 제외 통합 작업실</span><h2 id="csStage12Title">1·2단계 기능과 콘텐츠</h2></div><button id="csStage12Close" type="button" aria-label="닫기">×</button></header>
+    <header><div><span>결제 제외 통합 작업실</span><h2 id="csStage12Title">콘텐츠·도움말 작업실</h2></div><button id="csStage12Close" type="button" aria-label="닫기">×</button></header>
     <p class="cs-stage12-status" role="status" aria-live="polite" id="csStage12Status">기능 시험판 · 콘텐츠 1~3단계 확장·검증 진행 중</p>
     <div class="cs-stage12-stages">
       <article><b>1단계 · 무료 상용 흐름</b><p>원본 검사 → 직접 대본 → 근거 후보 → 편집 → 720p 내보내기 계획</p><small>실제 자동 받아쓰기·영상 렌더는 연결 상태를 따로 표시합니다.</small></article>
@@ -1023,7 +1025,7 @@ const TEMPLATES=[
 
 /* ============ 상태 ============ */
 const S={tpl:null,eng:'basic',scenes:[],playing:false,muted:false,rec:null,recChunks:[],vids:[],plan:'free',sceneIdx:0,sceneT0:0,raf:null,utter:null,audio:null,exporting:false,tone:'calm',rate:1.05,prod:null,score:null,hookOn:true};
-const QUOTA={free:10,plus:Infinity,pro:Infinity};
+const QUOTA={free:Infinity,plus:Infinity,pro:Infinity};
 
 /* ============ 유틸 ============ */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
@@ -1042,7 +1044,7 @@ function bumpUsed(){
 function renderQuota(){
   const lim=QUOTA[S.plan],used=getUsed();
   const el=$('#qTxt'),bar=$('#qFill');
-  if(lim===Infinity){el.innerHTML=`오늘 <b>${used}</b>편 · 무제한 ✨`;bar.style.width='100%';return}
+  if(lim===Infinity){el.innerHTML='무료 체험 · 실행 전 안내';bar.style.width='100%';return}
   el.innerHTML=`오늘 <b>${used}</b>/${lim}편`;
   bar.style.width=Math.min(100,used/lim*100)+'%';
 }
@@ -1112,7 +1114,7 @@ $('#aiBtn').onclick=()=>{
   if(!t){toast('주제를 입력해 주세요 (예: 에어팟, 다이어트)');$('#topic').focus();return}
   const gen=DRAFT[S.tpl.id]||DRAFT.know;
   ta.value=gen(t).join('\n');refreshMeta();
-  toast(`🤖 '${t}' 주제로 ${S.tpl.name} 초안을 만들었어요. 자유롭게 고쳐 쓰세요!`,3200);
+  toast(`문장 틀로 '${t}' 주제의 초안을 만들었어요. 근거를 확인하고 자유롭게 고쳐 쓰세요!`,3200);
 };
 
 /* ============ 0-2 상품 URL → 쇼핑 대본 ============ */
@@ -1268,7 +1270,7 @@ function autoAccent(t){
 }
 
 /* ============ 생성 시뮬레이션 ============ */
-const GEN_STEPS=['대본 분석 · 장면 분할','템플릿 스타일 적용','비주얼 · 모션 그래픽 생성','AI 나레이션 합성','자막 싱크 및 타이밍','최종 렌더링'];
+const GEN_STEPS=['대본 분석 · 장면 분할','템플릿 스타일 적용','비주얼 · 모션 그래픽 생성','브라우저 음성 미리듣기','자막 싱크 및 타이밍','로컬 프리뷰 준비'];
 $('#genBtn').onclick=()=>{
   if(quotaLeft()<=0){
     toast('오늘의 무료 10편을 모두 쓰셨어요! Plus로 업그레이드하면 무제한입니다 💎',3800);
@@ -1994,7 +1996,7 @@ analyticsConsentRead();
 /* ============ 요금제 데모 전환 ============ */
 $$('.plan').forEach(p=>p.querySelector('.pbtn2').onclick=()=>{
   S.plan=p.dataset.plan;renderQuota();
-  $$('.plan .pbtn2').forEach(b=>{b.textContent=b.closest('.plan').dataset.plan===S.plan?'현재 이용 중':(b.closest('.plan').dataset.plan==='free'?'Free로 전환':(b.closest('.plan').dataset.plan==='plus'?'Plus 시작하기':'Pro 시작하기'))});
+  $$('.plan .pbtn2').forEach(b=>{b.textContent=b.closest('.plan').dataset.plan===S.plan?'현재 이용 중':(b.closest('.plan').dataset.plan==='free'?'Free로 전환':(b.closest('.plan').dataset.plan==='plus'?'결제 연결 후 제공':'결제 연결 후 제공'))});
   toast(`${S.plan.toUpperCase()} 플랜으로 전환! ${S.plan!=='free'?'워터마크가 제거되고 상위 엔진이 열렸어요':''}`);
 });
 
@@ -2426,7 +2428,7 @@ function endOnb(){
   if(!S.tpl){
     $$('.tcard')[0].click();
     ta.value=TEMPLATES[0].ex;refreshMeta();
-    setTimeout(()=>toast('예시가 준비됐어요! [쇼츠 자동 생성]을 눌러 보세요 👇',4200),500);
+    setTimeout(()=>toast('예시가 준비됐어요! [쇼츠 프리뷰 만들기]을 눌러 보세요 👇',4200),500);
   }
 }
 $('#onbNext').onclick=()=>{onbI++;if(onbI>=ONB.length){endOnb();return}showOnb(onbI)};
@@ -2447,7 +2449,7 @@ refreshMeta();
   apiInput.value=api;
   function headers(extra){return Object.assign({'content-type':'application/json','x-user-id':user,'x-plan':'free'},extra||{})}
   function waitText(seconds){seconds=Math.max(0,Number(seconds)||0);if(!seconds)return '예상 대기 없음';if(seconds<60)return `약 ${seconds}초`;return `약 ${Math.ceil(seconds/60)}분`}
-  async function request(path,options){if(!api)throw new Error('먼저 작업 서버 주소를 입력해 주세요');const response=await fetch(api+path,Object.assign({},options||{},{headers:headers(options&&options.headers)}));let body={};try{body=await response.json()}catch(_){body={error:'응답을 읽을 수 없습니다'}}if(!response.ok)throw Object.assign(new Error(body.message||body.error||`서버 응답 ${response.status}`),{status:response.status,body});return body}
+  async function request(path,options){if(!api)throw new Error('먼저 작업 서버 연결(준비 중)를 입력해 주세요');const response=await fetch(api+path,Object.assign({},options||{},{headers:headers(options&&options.headers)}));let body={};try{body=await response.json()}catch(_){body={error:'응답을 읽을 수 없습니다'}}if(!response.ok)throw Object.assign(new Error(body.message||body.error||`서버 응답 ${response.status}`),{status:response.status,body});return body}
   function button(label,action,cls){const el=document.createElement('button');el.type='button';el.textContent=label;if(cls)el.className=cls;el.addEventListener('click',action);return el}
   function notify(job){if(!('Notification' in window)||Notification.permission!=='granted')return;const before=seen[job.jobId];seen[job.jobId]=job.status;if(before&&before!==job.status&&['done','failed'].includes(job.status))new Notification(`클릭쇼츠 · ${job.stageLabel}`,{body:job.status==='done'?'영상 작업이 끝났습니다.':'작업을 확인해 주세요.'})}
   function renderJobs(jobs){list.innerHTML='';if(!jobs.length){list.innerHTML='<div class="job-empty">이 조건에 맞는 작업이 없습니다.</div>';return}jobs.forEach(job=>{notify(job);const card=document.createElement('article');card.className='job-card';const head=document.createElement('div');head.className='job-card-head';const title=document.createElement('strong');title.textContent=job.stageLabel||job.status;const chip=document.createElement('span');chip.className='job-chip';chip.textContent=String(job.jobId||'').slice(0,8);head.append(title,chip);const bar=document.createElement('div');bar.className='job-progress';const fill=document.createElement('i');fill.style.width=`${Math.max(0,Math.min(100,Number(job.progress)||0))}%`;bar.appendChild(fill);const meta=document.createElement('div');meta.className='job-meta';meta.textContent=`진행 ${Number(job.progress)||0}% · ${waitText(job.estimatedWaitSeconds)}${job.queuePosition?` · 대기 ${job.queuePosition}번째`:''}`;card.append(head,bar,meta);if(job.error){const error=document.createElement('div');error.className='job-error';error.textContent=`실패 이유: ${job.error}`;card.appendChild(error)}const actions=document.createElement('div');actions.className='job-actions';if(job.url){const link=document.createElement('a');link.href=api+job.url;link.textContent='결과 열기';link.target='_blank';link.rel='noopener';actions.appendChild(link)}if(job.canCancel)actions.appendChild(button('대기 취소',()=>cancelJob(job.jobId),'danger'));if(job.canRetry)actions.appendChild(button('안전하게 다시 시도',()=>retryJob(job.jobId)));(job.alternatives||[]).filter(x=>!x.includes('다시 시도')).forEach(label=>actions.appendChild(button(label,()=>alternative(label))));card.appendChild(actions);list.appendChild(card)})}
@@ -2648,7 +2650,7 @@ refreshMeta();
   const core = window.ClickShortsAccountCore;
   if (!core) throw new Error('clickshorts_account_core_missing');
   const PUBLIC_URL = 'https://hanksleekorea-boop.github.io/clickshorts-app/';
-  const RELEASE_ID = 'v4.0-a968d597f6c3';
+  const RELEASE_ID = 'v4.0-72324fd6816c';
   const byId = function (id) { return document.getElementById(id); };
   const entry = byId('csAuthEntry');
   const authButton = byId('csAuthButton');
@@ -2858,9 +2860,10 @@ window.ClickShortsFreeContent={"catalog":{"schemaVersion":1,"catalogVersion":"fr
   const byId=id=>document.getElementById(id);
   const backdrop=byId('csFreeBackdrop'),dialog=backdrop&&backdrop.querySelector('.cs-free-dialog');
   if(!backdrop||!dialog)return;
+  const isApproved=item=>!item.editorialStatus||item.editorialStatus==='approved'||item.editorialStatus==='stage1-approved';
   let activeUseCase=data.useCases[0]&&data.useCases[0].id,activeExample=null,returnFocus=null;
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  const examplesFor=id=>data.examples.filter(item=>item.useCaseId===id);
+  const examplesFor=id=>data.examples.filter(item=>item.useCaseId===id&&isApproved(item));
   function renderUseCases(){
     byId('csFreeUseCases').innerHTML=data.useCases.map(item=>`<button type="button" data-usecase="${esc(item.id)}" aria-pressed="${item.id===activeUseCase}">${esc(item.name)}<small> · ${esc(item.length[0])}~${esc(item.length[1])}초</small></button>`).join('');
   }
@@ -2879,7 +2882,7 @@ window.ClickShortsFreeContent={"catalog":{"schemaVersion":1,"catalogVersion":"fr
   function close(){backdrop.hidden=true;if(returnFocus&&returnFocus.focus)returnFocus.focus();}
   byId('csFreePromise').textContent=data.catalog.promise.ko;
   const offer=data.catalog.offers[data.catalog.activeOfferId];
-  byId('csFreeQuota').textContent=`무료 후보 · 월 원본 ${offer.monthlySourceMinutes}분 · 활성 프로젝트 ${offer.activeProjects}개 · 720p 내보내기 ${offer.exportsPerMonth}회 · 카드 필요 없음`;
+  byId('csFreeQuota').textContent=`무료 공개판 안내 · 원본 ${offer.monthlySourceMinutes}분·프로젝트 ${offer.activeProjects}개·720p ${offer.exportsPerMonth}회는 공개 서버·계정 연결 후 적용 예정 · 카드 필요 없음`;
   byId('csFreeContentOpen').addEventListener('click',open);byId('csFreeClose').addEventListener('click',close);
   backdrop.addEventListener('click',event=>{if(event.target===backdrop)close();const use=event.target.closest('[data-usecase]');if(use){activeUseCase=use.dataset.usecase;activeExample=null;renderUseCases();renderExamples()}const ex=event.target.closest('[data-example]');if(ex){activeExample=ex.dataset.example;renderExamples();byId('csFreeDetail').scrollIntoView({block:'nearest'})}});
   dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close()}if(event.key!=='Tab')return;const nodes=[...dialog.querySelectorAll('button:not([disabled]),summary,[tabindex]:not([tabindex="-1"])')];if(!nodes.length)return;const first=nodes[0],last=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}});
@@ -2913,6 +2916,25 @@ byId('csStage12Open').addEventListener('click',open);byId('csStage12Close').addE
 dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close()}if(event.key!=='Tab')return;const nodes=[...dialog.querySelectorAll('button:not([disabled]),input,select,summary,[tabindex]:not([tabindex="-1"])')].filter(x=>!x.closest('[hidden]')&&x.getClientRects().length>0);if(!nodes.length)return;const first=nodes[0],last=nodes[nodes.length-1];if(event.shiftKey&&(document.activeElement===first||document.activeElement===dialog)){event.preventDefault();last.focus()}else if(!event.shiftKey&&(document.activeElement===last||document.activeElement===dialog)){event.preventDefault();first.focus()}});
 byId('csStage12Search').addEventListener('input',()=>{page=1;renderResults()});byId('csStage12Kind').addEventListener('change',()=>{page=1;renderResults()});byId('csStage12Prev').addEventListener('click',()=>{page--;renderResults()});byId('csStage12Next').addEventListener('click',()=>{page++;renderResults()});byId('csStage12Reload').addEventListener('click',()=>{if(pending)return;content=null;loadContent()});byId('csStage12Language').addEventListener('change',renderResults);
 byId('csStage12Save').addEventListener('click',()=>{try{localStorage.setItem('cs_stage12_preferences_v1',JSON.stringify({language:byId('csStage12Language').value,lowData:byId('csStage12LowData').checked,brandPreset:byId('csStage12Brand').checked}));byId('csStage12Status').textContent='내 설정을 이 기기에 저장했습니다.'}catch{byId('csStage12Status').textContent='이 기기에 설정을 저장하지 못했습니다. 저장 공간·브라우저 설정을 확인해 주세요.'}});
+})();
+
+
+/* CLICKSHORTS_CONTENT_HUB_CTA_V1 */
+(()=>{
+  const approved=x=>!x.editorialStatus||x.editorialStatus==='approved'||x.editorialStatus==='stage1-approved';
+  const params=new URLSearchParams(location.search),requested=params.get('example');
+  let saved=null;try{saved=JSON.parse(localStorage.getItem('clickshorts_selected_example')||'null')}catch(_){saved=null}
+  const id=requested||saved&&saved.id,data=window.ClickShortsFreeContent;
+  if(!id||!data||!Array.isArray(data.examples))return;
+  const item=data.examples.find(x=>String(x.id)===String(id)&&approved(x));
+  if(!item)return;
+  const topic=document.getElementById('topic'),script=document.getElementById('script');
+  if(topic)topic.value=item.name||'';
+  if(script)script.value=Array.isArray(item.segments)?item.segments.map(x=>x.text).join('\n'):(item.edit&&item.edit.script)||'';
+  if(typeof refreshMeta==='function')refreshMeta();
+  if(typeof switchView==='function')switchView('v-make');
+  if(typeof toast==='function')toast('선택한 검수 완료 예제를 불러왔습니다. 내용을 확인한 뒤 프리뷰를 만들어 주세요.',3600);
+  try{localStorage.removeItem('clickshorts_selected_example')}catch(_){ }
 })();
 
 </script>
